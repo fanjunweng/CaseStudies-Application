@@ -9,6 +9,5 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Javafx"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/dom4j-2.1.3"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
