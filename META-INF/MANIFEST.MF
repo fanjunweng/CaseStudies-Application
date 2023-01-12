@@ -33,7 +33,10 @@ Import-Package: org.eclipse.core.commands.common,
  tools.vitruv.framework.vsum,
  tools.vitruv.framework.vsum.internal,
  tools.vitruv.testutils,
- org.eclipse.core.resources
+ org.eclipse.core.resources,
+ edu.kit.ipd.sdq.commons.util.org.eclipse.emf.ecore.resource,
+ org.eclipse.emf.compare.match,
+ edu.kit.ipd.sdq.commons.util.java.lang
 Automatic-Module-Name: tools.vitruv.framework.visualization
 Bundle-RequiredExecutionEnvironment: JavaSE-19
 Require-Bundle: edu.kit.ipd.sdq.metamodels.families,

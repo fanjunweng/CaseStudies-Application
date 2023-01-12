@@ -1,0 +1,4 @@
+resources/vsum/*
+resources/model/*
+resources/consistencymetadata/*
+resources/test_project.marker_vitruv
