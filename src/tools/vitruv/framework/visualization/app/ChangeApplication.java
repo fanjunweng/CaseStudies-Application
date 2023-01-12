@@ -1,47 +1,28 @@
 package tools.vitruv.framework.visualization.app;
 
-import javafx.application.Application;
-import javafx.event.EventHandler;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-
-import java.awt.BorderLayout;
-import java.io.*;
-import java.util.*;
-import java.util.Date.*;
+import java.util.List;
+import java.util.StringJoiner;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import javax.swing.plaf.basic.BasicTextPaneUI;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.XMLResource;
-import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMLParserPoolImpl;
+
 import edu.kit.ipd.sdq.metamodels.families.FamiliesPackage;
 import edu.kit.ipd.sdq.metamodels.insurance.InsurancePackage;
 import edu.kit.ipd.sdq.metamodels.persons.PersonsPackage;
-import tools.vitruv.change.correspondence.CorrespondencePackage;
-import tools.vitruv.change.correspondence.Correspondences;
-import tools.vitruv.change.correspondence.CorrespondenceFactory;
-import tools.vitruv.dsls.demo.familiespersons.families2persons.FamiliesToPersonsChangePropagationSpecification;
+import javafx.application.Application;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import tools.vitruv.framework.visualization.api.VSUMVisualizationAPI;
 
 public class ChangeApplication extends Application {
