@@ -1,142 +1,31 @@
 package tools.vitruv.framework.visualization.app;
 
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.function.BiConsumer;
-
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.Resource;
-
-import edu.kit.ipd.sdq.metamodels.families.FamiliesPackage;
-import edu.kit.ipd.sdq.metamodels.insurance.InsurancePackage;
-import edu.kit.ipd.sdq.metamodels.persons.PersonsPackage;
 import javafx.application.Application;
-import javafx.scene.Node;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import tools.vitruv.framework.visualization.api.VSUMVisualizationAPI;
 
 public class ChangeApplication extends Application {
 
-	private VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> vsumVisualizationAPI;
+//	private VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> vsumVisualizationAPI;
+	private Controller controller = new Controller();
 
 	public static void main(String[] args) {
 		launch(args);
 	}
 
 	@Override
-	public void start(Stage stage) throws Exception {
-		// initialize data structures
-		vsumVisualizationAPI = VSUMVisualizationAPI.getVSUMFamiliesPersonsInsurancesAPI();
-
-		// Main layout
-		BorderPane pane = new BorderPane();
-
-		createTreeView(vsumVisualizationAPI.getT1(), pane, (node, bp) -> bp.setLeft(node));
-		createTreeView(vsumVisualizationAPI.getT2(), pane, (node, bp) -> bp.setCenter(node));
-		createTreeView(vsumVisualizationAPI.getT3(), pane, (node, bp) -> bp.setRight(node));
+	public void start(Stage primaryStage) throws Exception {
+		primaryStage.setTitle("Visualization");
+		Parent root = FXMLLoader.load(getClass().getResource("/view.fxml"));
+		BorderPane pane = (BorderPane) root;
 		
-		Text text = new Text();
-		StringJoiner builder = new StringJoiner(System.lineSeparator());
-		getResourceForPackageView(vsumVisualizationAPI.getT1()).getAllContents().forEachRemaining(eObject -> 
-			builder.add(eObject + " --> " + vsumVisualizationAPI.getCorrespondingEObjects(eObject)  + " --> " + 
-			vsumVisualizationAPI.getCorrespondingEObjects(vsumVisualizationAPI.getCorrespondingEObjects(eObject).iterator().next())));
-		text.setText(builder.toString());
-		pane.setBottom(text);
-//		TreeView<String> personsTreeView = convertDataToTreeView(getResourceForPackageView(vsumVisualizationAPI.getT2()));
-//		pane.setCenter(personsTreeView);
-//		personsTreeView.setMinWidth(400);
-
-		stage.setTitle("Visualization");
-		stage.setScene(new Scene(pane, 1800, 750));
-		stage.show();
-	}
-
-	private void createTreeView(EPackage ePackage, BorderPane borderLayout, BiConsumer<Node, BorderPane> addToPane) {
-		TreeView<String> treeView = convertDataToTreeView(getResourceForPackageView(ePackage));
-		treeView.setMinWidth(600);
-		addToPane.accept(treeView, borderLayout);
-	}
-
-	private Resource getResourceForPackageView(EPackage ePackage) {
-		return vsumVisualizationAPI.getView(ePackage).getRootObjects().iterator().next().eResource();
-	}
-
-	// Convert the resource data into tree view format
-	public TreeView<String> convertDataToTreeView(Resource resource) {
-		// Get content of the resource
-		EObject model = resource.getContents().get(0); // FamilyRegister in the first layer
-		EClass eclass = model.eClass();
-
-		// Create a root of the tree
-		TreeItem<String> rootItem = new TreeItem<String>(eclass.getName());
-		rootItem.setExpanded(true);
-
-		// Create a tree view
-		TreeView<String> tree = new TreeView<>(rootItem);
-		StringBuilder name = new StringBuilder();
-
-		// TW: Please try to keep your code short and expressive
-		for (EAttribute att : eclass.getEAttributes()) {
-			name.append(att.getName() + ": " + model.eGet(att) + " ");
-		}
-
-		TreeItem<String> attributeNode = new TreeItem<String>(name.toString());
-		rootItem.getChildren().add(attributeNode);
-
-		// Create all children nodes for each sub root of the tree
-		EList<EObject> subRootList = model.eContents(); // families in the second layer
-
-		for (EObject subRoot : subRootList) {
-			createChildren(rootItem, subRoot);
-		}
-
-		return tree;
-	}
-
-	// Recursive create all children nodes
-	public void createChildren(TreeItem<String> parentItem, EObject node) {
-		EStructuralFeature nodeName = node.eContainingFeature(); // = families, mothers, fathers, daughters, sons
-		EClass nodeClass = node.eClass();
-
-		List<EAttribute> nodeList = nodeClass.getEAllAttributes();
-
-		if (nodeList != null && nodeList.size() > 0) {
-
-			StringBuilder treeName = new StringBuilder(
-					nodeName.getName() + " of type " + node.eClass().getName() + " ");
-
-			for (EAttribute att : nodeList) {
-				String attName = att.getName(); // lastname or firstname
-				Object attValue = node.eGet(att);// Mueller or Lilian, Lea, Lukas
-
-//				if (attValue.getClass().getTypeName())){
-//					System.out.println(att.getContainerClass().getTypeName()); // Person/ Member
-//					System.out.println(nodeClass.get);
-//				}
-				// Create Tree view item for the sub root
-				treeName.append(attName + ": " + attValue + "   ");
-			}
-
-			TreeItem<String> memberNode = new TreeItem<String>(treeName.toString());
-			parentItem.getChildren().add(memberNode);
-			memberNode.setExpanded(true);
-
-			// Create Tree view item for the children of the sub root
-			for (EAttribute att : nodeList) {
-				for (EObject e : node.eContents()) {
-					createChildren(memberNode, e);
-				}
-			}
-		}
+        Scene scene = new Scene(root, 1800, 750);
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(true);
+        primaryStage.show();
+	
 	}
 }

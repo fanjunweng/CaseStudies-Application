@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.control.TextArea?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="tools.vitruv.framework.visualization.app.Controller" 
+			fx:id = "mainPane" maxHeight="Infinity" maxWidth="Infinity">
+    <left>
+        <TreeView fx:id = "leftTree" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="471.0" maxHeight="Infinity" maxWidth="Infinity"/>
+   
+    </left>
+    <center>
+        <TreeView fx:id = "centerTree" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="471.0" maxHeight="Infinity" maxWidth="Infinity"/>
+        
+    </center>
+    <right>
+        <TreeView fx:id = "rightTree" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="471.0" maxHeight="Infinity" maxWidth="Infinity"/>
+       
+    </right>
+    <bottom>
+    	<TextArea fx:id = "textArea" maxHeight="Infinity" maxWidth="Infinity"/>
+    </bottom>
+
+</BorderPane>
