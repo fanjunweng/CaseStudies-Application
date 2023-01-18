@@ -4,12 +4,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class ChangeApplication extends Application {
-
-//	private VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> vsumVisualizationAPI;
 	private Controller controller = new Controller();
 
 	public static void main(String[] args) {
@@ -20,7 +17,6 @@ public class ChangeApplication extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Visualization");
 		Parent root = FXMLLoader.load(getClass().getResource("/view.fxml"));
-		BorderPane pane = (BorderPane) root;
 		
         Scene scene = new Scene(root, 1800, 750);
         primaryStage.setScene(scene);
