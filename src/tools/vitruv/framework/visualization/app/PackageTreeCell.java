@@ -22,7 +22,7 @@ public class PackageTreeCell extends TreeCell<EObject>{
         	StringBuilder text  = new StringBuilder();
         	
         	//If this cell is not as the root tree item and have some containing feature
-        	if(getItem().eContainingFeature() !=null) {
+        	if(getItem().eContainingFeature() != null) {
         		//A feature and the type of the feature
         		text.append(getItem().eContainingFeature().getName() 
         				+ " of type " + getItem().eClass().getName() + " ");
@@ -45,6 +45,4 @@ public class PackageTreeCell extends TreeCell<EObject>{
         }
 
     }
-    
- 
 }

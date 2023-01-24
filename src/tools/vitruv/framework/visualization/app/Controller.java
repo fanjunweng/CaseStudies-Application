@@ -46,10 +46,6 @@ public class Controller implements Initializable{
 		createTreeView();
 		//create the text area in the bottom side of the main pane
 		createTextArea();
-
-//		TreeView<String> personsTreeView = convertDataToTreeView(getResourceForPackageView(vsumVisualizationAPI.getT2()));
-//		pane.setCenter(personsTreeView);
-//		personsTreeView.setMinWidth(400);
 	} 
 	
 	private void createTreeView() {
@@ -130,7 +126,6 @@ public class Controller implements Initializable{
 		sourceTree.getSelectionModel().select(cell.getTreeItem());
 		if(cell.getTreeItem() !=null) {
 			vsumVisualizationAPI.getCorrespondingEObjects(cell.getTreeItem().getValue()).forEach(correspondingObjects -> {
-				System.out.println(correspondingObjects.toString());
 				correspondingObjects.eClass().getEAllAttributes().forEach(attribute -> {
 					
 					targetTree.getRoot().getChildren().forEach(targetNode -> {
@@ -168,9 +163,19 @@ public class Controller implements Initializable{
 			targetNode.getValue().eClass().getEAllAttributes().forEach(attribute2 -> {
 	
 				if(correspondingObjects.eGet(attribute) != null){
+					System.out.println("corresponding: "+correspondingObjects.toString());
+//					System.out.println("\n correspondingObjects: "+ correspondingObjects.eGet(attribute).toString());
+					
+//					if(targetNode.getValue().eGet(attribute2) !=null) {
+//						System.out.println(" ///"+ targetNode.getValue().eGet(attribute2).toString());
+//					}
+							
+//					System.out.println("\n attribute: "+attribute.getName()+", "+ attribute2.getName());
+					
 					if(attribute.getName().equals(attribute2.getName())
-							&& correspondingObjects.eGet(attribute)
-							.equals(targetNode.getValue().eGet(attribute2))) {
+							&& targetNode.getValue().eGet(attribute2)
+							.equals(correspondingObjects.eGet(attribute))) {
+							
 						targetTree.getSelectionModel().select(targetNode);
 					}
 				}

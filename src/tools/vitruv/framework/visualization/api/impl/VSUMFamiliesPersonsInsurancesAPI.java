@@ -114,12 +114,36 @@ public class VSUMFamiliesPersonsInsurancesAPI implements
 		var selector = vsum.createSelector(ViewTypeFactory.createIdentityMappingViewType("all"));
 		CommittableView view = selector.createView().withChangeDerivingTrait();
 		view.registerRoot(familyRegister, FAMILY_URI);
-		Family family = FamiliesFactory.eINSTANCE.createFamily();
-		family.setLastName("Mueller");
-		Member son = FamiliesFactory.eINSTANCE.createMember();
-		son.setFirstName("Florian");
-		son.setFamilySon(family);
-		familyRegister.getFamilies().add(family);
+		Family family1 = FamiliesFactory.eINSTANCE.createFamily();
+		family1.setLastName("Mueller");
+		Member father1 = FamiliesFactory.eINSTANCE.createMember();
+		father1.setFirstName("Alex");
+		father1.setFamilyFather(family1);
+		Member mother1 = FamiliesFactory.eINSTANCE.createMember();
+		mother1.setFirstName("Jenny");
+		mother1.setFamilyMother(family1);
+		Member son1 = FamiliesFactory.eINSTANCE.createMember();
+		son1.setFirstName("Florian");
+		son1.setFamilySon(family1);
+		familyRegister.getFamilies().add(family1);
+		
+		
+		Family family2 = FamiliesFactory.eINSTANCE.createFamily();
+		family2.setLastName("Schmidt");
+		Member father2 = FamiliesFactory.eINSTANCE.createMember();
+		father2.setFirstName("Lukas");
+		father2.setFamilyFather(family2);
+		Member mother2 = FamiliesFactory.eINSTANCE.createMember();
+		mother2.setFirstName("Lilian");
+		mother2.setFamilyMother(family2);
+		Member dauther2 = FamiliesFactory.eINSTANCE.createMember();
+		dauther2.setFirstName("Lea");
+		dauther2.setFamilyDaughter(family2);
+		
+		familyRegister.getFamilies().add(family2);
+		
+		
+		
 		// the consistency preservation is active and generates a person register
 		// automatically
 		view.commitChanges();
