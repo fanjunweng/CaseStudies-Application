@@ -8,7 +8,6 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="tools.vitruv.framework.visualization.app.Controller" 
 			fx:id = "mainPane" maxHeight="Infinity" maxWidth="Infinity">
-
     <left>
         <TreeView fx:id = "leftTree" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="471.0" maxHeight="Infinity" maxWidth="Infinity"/>
     </left>

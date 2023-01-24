@@ -40,9 +40,9 @@ import tools.vitruv.framework.visualization.api.VSUMVisualizationAPI;
 
 public class Controller implements Initializable{
 	@FXML private BorderPane mainPane;
-	@FXML private TreeView<String> leftTree;
-	@FXML private TreeView<String> centerTree;
-	@FXML private TreeView<String> rightTree;
+	@FXML private TreeView<EObject> leftTree;
+	@FXML private TreeView<EObject> centerTree;
+	@FXML private TreeView<EObject> rightTree;
 	@FXML private TextArea textArea;
 //	@FXML private Line line;
 	
@@ -65,15 +65,13 @@ public class Controller implements Initializable{
 		
 		//create the text area in the bottom side of the main pane
 		createTextArea();
-		createAllVisualCorrespondences();
-		
 	
 //		TreeView<String> personsTreeView = convertDataToTreeView(getResourceForPackageView(vsumVisualizationAPI.getT2()));
 //		pane.setCenter(personsTreeView);
 //		personsTreeView.setMinWidth(400);
 	} 
 	
-	private void createTreeView(Model model, TreeView<String> tree) {
+	private void createTreeView(Model model, TreeView<EObject> tree) {
 		convertDataToTreeView(model, tree);
 }
 
@@ -85,212 +83,51 @@ public class Controller implements Initializable{
 		textArea.setText(builder.toString());
 	}
 	
-	private void createAllVisualCorrespondences() {
-//		model1.getResourceForPackageView().getAllContents().forEachRemaining(eObject -> {
-//		createCorrespondenceLine(eObject, vsumVisualizationAPI.getCorrespondingEObjects(eObject).iterator().next(), vsumVisualizationAPI.getT1());
-//	1 = eObject;
-//	2 = vsumVisualizationAPI.getCorrespondingEObjects(eObject);
-//	3 = vsumVisualizationAPI.getCorrespondingEObjects(vsumVisualizationAPI.getCorrespondingEObjects(eObject).iterator().next());
-//	});
-		Line line = createCorrespondenceLine(new Line(), leftTree, centerTree);
-		Line line2 = createCorrespondenceLine(new Line(), centerTree, rightTree);
-		
-
-        mainPane.getChildren().add(line);
-        mainPane.getChildren().add(line2);
-	}
-
-	private Line createCorrespondenceLine(Line line, TreeView<String> sourceTree, TreeView<String> targetTree) {
-		ObjectProperty<Point2D> start = new SimpleObjectProperty<>(this, "start");
-		ObjectProperty<Point2D> end = new SimpleObjectProperty<>(this, "end");
-		
-		line.getStyleClass().add("assignment");
-		line.setManaged(false);
-		line.setStroke(Color.BLUE);
-		line.startXProperty().bind(Bindings.createDoubleBinding(() -> {
-			if (start.get()==null) {
-				return 0.0 ;
-			} else {
-				return start.get().getX();
-			}
-		}, start));
-		
-		line.startYProperty().bind(Bindings.createDoubleBinding(() -> {
-			if (start.get()==null) {
-				return 0.0 ;
-			} else {
-				return start.get().getY();
-			}
-		}, start));
-		
-		line.endXProperty().bind(Bindings.createDoubleBinding(() -> {
-			if (end.get()==null) {
-				return 0.0 ;
-			} else {
-				return end.get().getX();
-			}
-		}, end));
-
-		line.endYProperty().bind(Bindings.createDoubleBinding(() -> {
-			if (end.get()==null) {
-				return 0.0 ;
-			} else {
-				return end.get().getY();
-			}
-		}, end));
-		
-		line.visibleProperty().bind(
-				Bindings.isNotNull(start)
-				.and(Bindings.isNotNull(end)));
-		
-		sourceTree.setCellFactory((TreeView<String> p) -> {
-			TextFieldTreeCell cell = new TextFieldTreeCell();
-
-			cell.itemProperty().addListener((obs, oldValue, newValue) -> {
-				if(newValue != null) {
-					bindLocation(start, cell, leftTree);
-				}
-			});
-			return cell;
-		});
-		
-		targetTree.setCellFactory((TreeView<String> p) -> {
-			TextFieldTreeCell cell = new TextFieldTreeCell();
-			System.out.println(cell.itemProperty().getValue());
-			
-			cell.itemProperty().addListener((obs, oldValue, newValue) -> {
-				if(newValue!=null) {
-					bindLocation(end, cell, centerTree);
-				}
-			});
-			return cell;
-		});
-        
-        return line;
-	}
 	
-	private void bindLocation(ObjectProperty<Point2D> locationToBind, TreeCell<?> cell, TreeView<?> tree) {
-		Node treeParent = tree.getParent();
-		ObjectBinding<Point2D> locationBinding = new ObjectBinding<Point2D>() {
-			
-			{
-				cell.localToSceneTransformProperty().addListener((obs, oldTransform, newTransform) -> this.invalidate());
-				tree.boundsInParentProperty().addListener((obs, oldBounds, newBounds) -> this.invalidate());
-			}
-
-			@Override
-			protected Point2D computeValue() {
-				Bounds cellBoundsInLocal = cell.getBoundsInLocal();
-				Point2D cellCenter = new Point2D(
-						cellBoundsInLocal.getMinX() + cellBoundsInLocal.getWidth() / 2,
-						cellBoundsInLocal.getMinY() + cellBoundsInLocal.getHeight() / 2);
-				Point2D cellCenterInScene = cell.localToScene(cellCenter);
-				Point2D cellCenterInTreeParent = treeParent.sceneToLocal(cellCenterInScene);
-				return cellCenterInTreeParent ;			}
-			
-		};
-		locationToBind.bind(locationBinding);
-	}
-	
-	private List<Node> getNode(EPackage sourcePackage, EObject sourceObject) {
-		final List<Node> nodeList = null;
-
-		if(sourcePackage.equals(vsumVisualizationAPI.getT1())){
-			
-			for(Node n: leftTree.getChildrenUnmodifiable()) {
-				System.out.println(n.toString() +"--"+ sourceObject.toString());
-				if(n.toString().equals(sourceObject.toString())) {
-					nodeList.add(n);
-				}		
-			}
-		}else if(sourcePackage.equals(vsumVisualizationAPI.getT2())){
-			for(Node n: centerTree.getChildrenUnmodifiable()) {
-				System.out.println(n.toString() +"--"+ sourceObject.toString());
-				if(n.toString().equals(sourceObject.toString())) {
-					nodeList.add(n);
-				}		
-			}
-		}
-		return nodeList;
-	}
-	
-//	private void buildVisualCorrespondence(Set<EObject> correspondingEObjects, EPackage targetPackage) {
-//		if (correspondingEObjects.size() > 0) {
-//			correspondingEObjects.forEach(it -> {
-//				vsumVisualizationAPI.getView(targetPackage).getRootObjects().forEach(its -> {
-//					System.out.println("it: " + it());
-//				});
-//			});
-//		}
-//	}
-	
-//	private Resource getResourceForPackageView(EPackage ePackage) {
-//		return vsumVisualizationAPI.getView(ePackage).getRootObjects().iterator().next().eResource();
-//	}
 
 	// Convert the resource data into tree view format
-	public void convertDataToTreeView(Model model, TreeView<String> tree) {
+	public void convertDataToTreeView(Model model, TreeView<EObject> tree) {
 		// Get content of the resource
 		Resource modelResource = model.getResourceForPackageView();
 		EObject resource = modelResource.getContents().get(0); // FamilyRegister in the first layer
-		int nodeIndex = -1; //parent node is root
 		// Create a root for the tree
-		TreeItem<String> rootItem = new TreeItem<String>(resource.eClass().getName()); 
+		TreeItem<EObject> rootItem = new TreeItem<EObject>(resource); 
 		rootItem.setExpanded(true);
 		tree.setRoot(rootItem);
-		model.addEObject(resource.eClass(), nodeIndex);
 		
-		StringBuilder name = new StringBuilder();
-
-//		// TW: Create the name of the attribute of the id
-		for (EAttribute att : resource.eClass().getEAttributes()) {
-			name.append(att.getName() + ": " + resource.eContainingFeature() + " "); // = what is the id number??
-			model.addEObject(att, nodeIndex++);
-		}
-	
-		TreeItem<String> attributeNode = new TreeItem<String>(name.toString()); 
-		rootItem.getChildren().add(attributeNode);
+		//Set the tree cell factory for the tree using the class PackageTreeCell
+		tree.setCellFactory(tv -> {
+			PackageTreeCell cell = new PackageTreeCell();
+			cell.setOnMouseClicked(e -> {
+//			        tree.getSelectionModel().select(cell.getTreeItem());
+				//The color of the corresponding cell will be changed to blue violet.
+				cell.setStyle("-fx-background-color:#8A2BE2;");
+			    });
+		    return cell ;
+		});
 	
 	
 		// Create all children nodes for each sub root of the tree
-		EList<EObject> subRootList = resource.eContents(); // families in the second layer
-	
-		for (EObject subRoot : subRootList) {
-			createChildren(rootItem, subRoot, model, nodeIndex);
+		for (EObject subRoot : resource.eContents()) {
+			createChildren(rootItem, subRoot);
 		}
 	}
 
 	// Recursive create all children nodes
-	public void createChildren(TreeItem<String> parentItem, EObject node, Model model, int nodeIndex) {
-		EStructuralFeature nodeName = node.eContainingFeature(); // = families, mothers, fathers, daughters, sons
+	public void createChildren(TreeItem<EObject> parentItem, EObject node) {
+		TreeItem<EObject> memberNode = new TreeItem<EObject>(node);
+		parentItem.getChildren().add(memberNode);
+		memberNode.setExpanded(true);
+		
 		List<EAttribute> nodeList = node.eClass().getEAllAttributes();
-	
 		if (nodeList != null && nodeList.size() > 0) {
-			
-			StringBuilder treeName = new StringBuilder(
-					nodeName.getName() + " of type " + node.eClass().getName() + " ");
-	
-			for (EAttribute att : nodeList) {
-				String attName = att.getName(); // lastname or firstname
-				Object attValue = node.eGet(att);// Mueller or Lilian, Lea, Lukas
-	
-				// Create Tree view item for the sub root
-				treeName.append(attName + ": " + attValue + "   ");
-				model.addEObject(att, nodeIndex++);
-			}
-			
-			TreeItem<String> memberNode = new TreeItem<String>(treeName.toString());
-			parentItem.getChildren().add(memberNode);
-			memberNode.setExpanded(true);
-	
 			// Create Tree view item for the children of the sub root
-			for (EAttribute att : nodeList) {
-				for (EObject e : node.eContents()) {
-					createChildren(memberNode, e, model, nodeIndex++);
-				}
+			for (EObject e : node.eContents()) {
+				createChildren(memberNode, e);
 			}
 		}
-	}	
-}
+	}
+}	
+
 
 

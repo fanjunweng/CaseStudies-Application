@@ -23,7 +23,6 @@ public class Model {
 	private VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage>  vsumVisualizationAPI;
 	private Resource resource;
 	private EPackage ePackage;
-	private List<TreeNode<EObject>> objectList = new ArrayList();
 	
 	public Model(VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage>  vsumVisualizationAPI,
 				 EPackage ePackage) {
@@ -51,16 +50,6 @@ public class Model {
 	
 	public EPackage getEPackage() {
 		return this.ePackage;
-	}
-
-	public List<TreeNode<EObject>> getObjectList() {
-		return this.objectList;
-	}
-
-	
-	public void addEObject(EObject object, int parent) {
-		TreeNode<EObject> newNode = new TreeNode<EObject>(object, parent);
-		this.objectList.add(newNode);
 	}
 
 }
