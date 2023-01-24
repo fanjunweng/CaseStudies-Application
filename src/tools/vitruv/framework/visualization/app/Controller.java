@@ -21,6 +21,8 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import tools.vitruv.change.composite.description.PropagatedChange;
+import tools.vitruv.change.composite.description.VitruviusChange;
 import tools.vitruv.framework.visualization.api.VSUMVisualizationAPI;
 
 public class Controller implements Initializable{
@@ -46,6 +48,8 @@ public class Controller implements Initializable{
 		createTreeView();
 		//create the text area in the bottom side of the main pane
 		createTextArea();
+//		TransactionalChangeImpl change = new TransactionalChangeImpl();
+//		List<PropagatedChange> list = propagateChange(new TransactionalChangeImpl().resolveAndApply(model1.getResourceForPackageView().getResourceSet()));
 	} 
 	
 	private void createTreeView() {
@@ -101,6 +105,7 @@ public class Controller implements Initializable{
 		});
 	
 		// Create all children nodes for each sub root of the tree
+//		System.out.println(resource.eContents().size());
 		for (EObject subRoot : resource.eContents()) {
 			createChildren(rootItem, subRoot);
 		}

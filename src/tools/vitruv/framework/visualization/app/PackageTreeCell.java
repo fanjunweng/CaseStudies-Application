@@ -31,6 +31,10 @@ public class PackageTreeCell extends TreeCell<EObject>{
         		getItem().eClass().getEAllAttributes().forEach(e -> {
         			text.append(e.getName() +": "+ getItem().eGet(e) + "   ");
         		});
+        		
+        		if(!getTreeItem().isLeaf()) {
+        			text.append("     ("+ item.eContents().size()+")");
+        		}
         		setText(text.toString());
         		
         	}else{
@@ -38,10 +42,12 @@ public class PackageTreeCell extends TreeCell<EObject>{
         		getItem().eClass().getEAllAttributes().forEach(e -> {
         			text.append("  "+ e.getName() +": "+ getItem().eGet(e));
         		});
+        		text.append("     ("+ item.eContents().size()+")");
         		setText(text.toString());
         	}
         
             setGraphic(getTreeItem().getGraphic());
+         
         }
 
     }
