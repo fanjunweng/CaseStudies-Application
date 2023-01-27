@@ -3,12 +3,14 @@ package tools.vitruv.framework.visualization.api.impl;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -241,6 +243,10 @@ public class VSUMFamiliesPersonsInsurancesAPI implements
 	public InsurancePackage getT3() {
 		return InsurancePackage.eINSTANCE;
 	}
+	
+	private Set<EObject> filterNonNull(EObject...eObjects) {
+		return Arrays.stream(eObjects).filter(it -> it != null).collect(Collectors.toSet());
+	}
 
 	@Override
 	public Set<EObject> getCorrespondingEObjects(EObject sourceObject) {
@@ -248,8 +254,8 @@ public class VSUMFamiliesPersonsInsurancesAPI implements
 				personMap.getOrDefault(sourceObject, insuranceMap.get(sourceObject))));
 		if (sourceObj.iterator().hasNext()) {
 			var sourceO = sourceObj.iterator().next();
-			return Set.of(familyMap.inverse().getOrDefault(sourceO,
-					personMap.inverse().getOrDefault(sourceO, insuranceMap.inverse().getOrDefault(sourceO, null))));
+			return filterNonNull(familyMap.inverse().get(sourceO),
+					personMap.inverse().get(sourceO), insuranceMap.inverse().get(sourceO));
 		}
 		return Set.of();
 	}
