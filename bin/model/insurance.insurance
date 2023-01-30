@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<insurance:InsuranceDatabase xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:insurance="edu.kit.ipd.sdq.metamodels.insurance">
+  <insuranceclient name="Florian Mueller"/>
+  <insuranceclient name="Alex Mueller"/>
+  <insuranceclient name="Jenny Mueller" gender="FEMALE"/>
+  <insuranceclient name="Lea Schmidt" gender="FEMALE"/>
+  <insuranceclient name="Lukas Schmidt"/>
+  <insuranceclient name="Lilian Schmidt" gender="FEMALE"/>
+</insurance:InsuranceDatabase>

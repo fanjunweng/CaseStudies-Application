@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<persons:PersonRegister xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:persons="edu.kit.ipd.sdq.metamodels.persons">
+  <persons xsi:type="persons:Male" fullName="Florian Mueller"/>
+  <persons xsi:type="persons:Male" fullName="Alex Mueller"/>
+  <persons xsi:type="persons:Female" fullName="Jenny Mueller"/>
+  <persons xsi:type="persons:Female" fullName="Lea Schmidt"/>
+  <persons xsi:type="persons:Male" fullName="Lukas Schmidt"/>
+  <persons xsi:type="persons:Female" fullName="Lilian Schmidt"/>
+</persons:PersonRegister>

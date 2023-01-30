@@ -2,12 +2,12 @@ package tools.vitruv.framework.visualization.app;
 
 import org.eclipse.emf.ecore.EObject;
 
-import javafx.scene.Node;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TreeCell;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 
+/**
+ * This class refers to the custom tree cell from the tree view.
+ *
+ */
 public class PackageTreeCell extends TreeCell<EObject>{
 
     @Override
@@ -28,8 +28,10 @@ public class PackageTreeCell extends TreeCell<EObject>{
         				+ " of type " + getItem().eClass().getName() + " ");
         		
         		//An attribute of the feature and the attribute value
-        		getItem().eClass().getEAllAttributes().forEach(e -> {
-        			text.append(e.getName() +": "+ getItem().eGet(e) + "   ");
+        		getItem().eClass().getEAllAttributes().forEach(attribute -> {
+        			if(getItem().eGet(attribute) != null) {
+        				text.append(attribute.getName() +": "+ getItem().eGet(attribute) + "   ");
+        			}
         		});
         		
         		if(!getTreeItem().isLeaf()) {
