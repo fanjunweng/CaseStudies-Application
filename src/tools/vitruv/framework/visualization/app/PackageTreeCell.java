@@ -31,9 +31,12 @@ public class PackageTreeCell extends TreeCell<EObject>{
         		getItem().eClass().getEAllAttributes().forEach(attribute -> {
         			if(getItem().eGet(attribute) != null) {
         				text.append(attribute.getName() +": "+ getItem().eGet(attribute) + "   ");
+        			}else {
+        				text.append(attribute.getName() +": "+ "   ");
         			}
         		});
         		
+        		//Show the number of the children
         		if(!getTreeItem().isLeaf()) {
         			text.append("     ("+ item.eContents().size()+")");
         		}

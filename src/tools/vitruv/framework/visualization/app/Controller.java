@@ -2,7 +2,9 @@ package tools.vitruv.framework.visualization.app;
 
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.StringJoiner;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -130,6 +132,7 @@ public class Controller implements Initializable{
 			    	} else if(model.getTreeView().equals(model3.getTreeView())) {
 			    		//Find the tree item of the right tree that corresponds to the item in the center tree 
 			    		selectCorrespondingTreeItem(cell, rightTree, centerTree); //Correspondence direction: InsurancePackage -> PersonsPackage
+			    		selectCorrespondingTreeItem(cell, rightTree, leftTree); //?
 			    	}
 		    	}
 			});
@@ -163,13 +166,9 @@ public class Controller implements Initializable{
 	 */
 	public void selectCorrespondingTreeItem(PackageTreeCell cell, TreeView<EObject> sourceTree, TreeView<EObject> targetTree) {
 		sourceTree.getSelectionModel().select(cell.getTreeItem());
-		if(cell.getTreeItem() !=null) {
-			vsumVisualizationAPI.getCorrespondingEObjects(cell.getTreeItem().getValue()).forEach(correspondingObjects -> {
-				correspondingObjects.eClass().getEAllAttributes().forEach(correspondingAttribute -> {
-					targetTree.getRoot().getChildren().forEach(targetItem -> {
-						selectTargetLeaf(targetTree, targetItem, correspondingObjects, correspondingAttribute);
-					});
-				});
+		if(cell.getTreeItem() != null) {
+			targetTree.getRoot().getChildren().forEach(targetItem -> {
+				selectTargetLeaf(targetTree, targetItem, vsumVisualizationAPI.getCorrespondingEObjects(cell.getTreeItem().getValue()));
 			});
 		}
 	}
@@ -182,15 +181,10 @@ public class Controller implements Initializable{
 	 */
 	public void selectCorrespondingTreeItem(TreeView<EObject> sourceTree, TreeView<EObject> targetTree) {
 		sourceTree.getSelectionModel().getSelectedItems().forEach(selected -> {
-			vsumVisualizationAPI.getCorrespondingEObjects(selected.getValue()).forEach(correspondingObjects -> {
-				correspondingObjects.eClass().getEAllAttributes().forEach(correspondingAttribute -> {
-					targetTree.getRoot().getChildren().forEach(targetItem -> {
-						selectTargetLeaf(targetTree, targetItem, correspondingObjects, correspondingAttribute);
-					});
-				});
+			targetTree.getRoot().getChildren().forEach(targetItem -> {
+				selectTargetLeaf(targetTree, targetItem, vsumVisualizationAPI.getCorrespondingEObjects(selected.getValue()));
 			});
 		});
-		
 	}
 		
 	/**
@@ -211,20 +205,42 @@ public class Controller implements Initializable{
 	 */
 	
 	//The corresponding leaf tree item will be automatically selected.
-	public void selectTargetLeaf(TreeView<EObject> targetTree, TreeItem<EObject> targetItem, EObject correspondingObject, EAttribute correspondingAttribute) {
-		if(targetItem.isLeaf()) {
-			targetItem.getValue().eClass().getEAllAttributes().forEach(targetAttribute -> {
-				if(correspondingObject.eGet(correspondingAttribute) != null){
-					System.out.println("corresponding: "+correspondingObject.toString());
-					if(correspondingAttribute.getName().equals(targetAttribute.getName())
-							&& targetItem.getValue().eGet(targetAttribute)
-							.equals(correspondingObject.eGet(correspondingAttribute))) {	
+	public void selectTargetLeaf(TreeView<EObject> targetTree, TreeItem<EObject> targetItem, Set<EObject> correspondingObjectSet) {
+		correspondingObjectSet.forEach(correspondingObject -> {
+			if(correspondingObject.eClass().equals(targetItem.getValue().eClass())) {
+				Boolean isMatched = true;
+				for(EAttribute targetAttribute : targetItem.getValue().eClass().getEAllAttributes()){
+					for(EAttribute correspondingAttribute: correspondingObject.eClass().getEAllAttributes()) {
+						if(correspondingAttribute.getName().equals(targetAttribute.getName())){
+							if(correspondingObject.eGet(correspondingAttribute) == null 
+									&& targetItem.getValue().eGet(targetAttribute) == null){
+								isMatched &= true;
+							}else if(correspondingObject.eGet(correspondingAttribute) != null 
+									&& targetItem.getValue().eGet(targetAttribute) != null){
+//								System.out.println("------------");
+//								System.out.println(correspondingAttribute.getName() +" "+ targetAttribute.getName() + "   "+correspondingAttribute.getName().equals(targetAttribute.getName()));
+//								System.out.println(correspondingObject.eGet(correspondingAttribute) +" "+ targetItem.getValue().eGet(targetAttribute) + "   "+ correspondingObject.eGet(correspondingAttribute).equals(targetItem.getValue().eGet(targetAttribute)));
+								if(correspondingAttribute.getName().equals(targetAttribute.getName())
+										&& correspondingObject.eGet(correspondingAttribute).equals(targetItem.getValue().eGet(targetAttribute))) {
+									isMatched &= true;
+									
+								}else {
+									isMatched &= false;
+								}
+							}
+						}		
+					}
+				}
+			
+				if(isMatched) {
+					if(!targetItem.isLeaf()) {
+						targetItem.getChildren().forEach(targetChildItem -> {selectTargetLeaf(targetTree, targetChildItem, correspondingObjectSet);});
+					}else {
+						System.out.println(targetItem);
 						targetTree.getSelectionModel().select(targetItem);
 					}
 				}
-			});
-		}else {
-			targetItem.getChildren().forEach(targetChildItem -> {selectTargetLeaf(targetTree, targetChildItem, correspondingObject, correspondingAttribute);});
-		}
+			}
+		});
 	}
 }	
