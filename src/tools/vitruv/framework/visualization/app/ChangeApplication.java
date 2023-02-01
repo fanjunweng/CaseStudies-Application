@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class ChangeApplication extends Application {
-	private Controller controller = new Controller();
 
 	public static void main(String[] args) {
 		launch(args);

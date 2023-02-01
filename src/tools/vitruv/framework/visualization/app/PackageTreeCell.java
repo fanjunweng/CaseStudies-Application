@@ -16,9 +16,10 @@ import javafx.scene.layout.HBox;
  */
 public class PackageTreeCell extends TreeCell<EObject>{
 	private String classLabelStyle = "-fx-font: normal bold 14px 'serif'";
-	private String featureLabelStyle = "-fx-font: normal bold 15px 'serif'; -fx-text-fill: darkblue"; 
-	private String attributeLabelStyle = "-fx-font: normal bold 13px; -fx-text-fill: darkblue";
+	private String featureLabelStyle = "-fx-font: normal bold 15px 'serif'; -fx-text-fill: dimgray"; 
+	private String attributeLabelStyle = "-fx-font: normal bold 13px; -fx-text-fill: midnightblue";
 	private String valueLabelStyle = "-fx-font: normal bold 14px 'serif'";
+	private String createdLabelStyle = "-fx-background-color: gold; -fx-font: 9px bold";
 	
     @Override
     public void updateItem(EObject item, boolean empty) {
@@ -44,6 +45,10 @@ public class PackageTreeCell extends TreeCell<EObject>{
         		//Show the number of the children
         		if(!getTreeItem().isLeaf()) {
         			hbox.getChildren().add(new Label("("+ item.eContents().size()+")"));
+        		}else {
+        			Label createdLabel = new Label("Created");
+            		createdLabel.setStyle(createdLabelStyle);
+            		hbox.getChildren().add(createdLabel);
         		}
         	}else{
         		//Show the root content

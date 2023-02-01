@@ -34,7 +34,6 @@ public class Controller implements Initializable{
 	@FXML private TreeView<EObject> centerTree;// A tree view for the PersonsPackage in the middle 
 	@FXML private TreeView<EObject> rightTree;// A tree view for the InsurancePackage on the right 
 	@FXML private TextArea textArea;//A text area a the bottom
-
 	
 	private VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> vsumVisualizationAPI; //A API for the visualization of three packages 
 	private Model model1;// A model for the FamiliesPackage view
@@ -114,6 +113,7 @@ public class Controller implements Initializable{
 			cell.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			    @Override
 			    public void handle(MouseEvent event) {
+			    	//Clear all selection highlights of the corresponding tree items
 		    		clearAllSelections();
 		    		//If a tree cell of the left tree (with FamilyPackeg view) is clicked
 			    	if(model.getTreeView().equals(model1.getTreeView())) {
@@ -121,7 +121,7 @@ public class Controller implements Initializable{
 			    		selectCorrespondingTreeItem(cell, leftTree, centerTree); //Correspondence direction: FamiliesPackage -> PersonsPackage
 			    		//Find the tree item of the center tree that corresponds to the item in the right tree
 			    		selectCorrespondingTreeItem(centerTree, rightTree); //Correspondence direction: PersonsPackage -> InsurancePackage
-			    		
+
 			    	} else if(model.getTreeView().equals(model2.getTreeView())) {
 			    		//Find the tree item of the center tree that corresponds to the item in the leftTree tree
 			    		selectCorrespondingTreeItem(cell, centerTree, leftTree);  //Correspondence direction: PersonsPackage -> FamiliesPackage
