@@ -2,58 +2,86 @@ package tools.vitruv.framework.visualization.app;
 
 import org.eclipse.emf.ecore.EObject;
 
+import javafx.geometry.HPos;
+import javafx.geometry.Orientation;
+import javafx.geometry.VPos;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TreeCell;
+import javafx.scene.layout.HBox;
 
 /**
  * This class refers to the custom tree cell from the tree view.
  *
  */
 public class PackageTreeCell extends TreeCell<EObject>{
-
+	private String classLabelStyle = "-fx-font: normal bold 14px 'serif'";
+	private String featureLabelStyle = "-fx-font: normal bold 15px 'serif'; -fx-text-fill: darkblue"; 
+	private String attributeLabelStyle = "-fx-font: normal bold 13px; -fx-text-fill: darkblue";
+	private String valueLabelStyle = "-fx-font: normal bold 14px 'serif'";
+	
     @Override
     public void updateItem(EObject item, boolean empty) {
         super.updateItem(item, empty);
-        
         
         if (empty) {
             setText(null);
             setGraphic(null);
         } else {
-        	StringBuilder text  = new StringBuilder();
-        	
+        	HBox hbox = new HBox(6);
         	//If this cell is not as the root tree item and have some containing feature
         	if(getItem().eContainingFeature() != null) {
         		//A feature and the type of the feature
-        		text.append(getItem().eContainingFeature().getName() 
-        				+ " of type " + getItem().eClass().getName() + " ");
-        		
-        		//An attribute of the feature and the attribute value
-        		getItem().eClass().getEAllAttributes().forEach(attribute -> {
-        			if(getItem().eGet(attribute) != null) {
-        				text.append(attribute.getName() +": "+ getItem().eGet(attribute) + "   ");
-        			}else {
-        				text.append(attribute.getName() +": "+ "   ");
-        			}
-        		});
-        		
+        		Label featureLabel = new Label(getItem().eContainingFeature().getName());
+        		featureLabel.setStyle(featureLabelStyle);
+        		Label typeLabel = new Label( " of type ");
+        		Label classLabel = new Label(getItem().eClass().getName());
+        		classLabel.setStyle(classLabelStyle);
+        		hbox.getChildren().addAll(featureLabel, typeLabel, classLabel);
+        		createSeparator(hbox);	
+        		//Create a label of the attribute of the feature with the value
+        		createAttributeLabel(hbox);
         		//Show the number of the children
         		if(!getTreeItem().isLeaf()) {
-        			text.append("     ("+ item.eContents().size()+")");
+        			hbox.getChildren().add(new Label("("+ item.eContents().size()+")"));
         		}
-        		setText(text.toString());
         		
         	}else{
-        		text.append(getItem().eClass().getName());
-        		getItem().eClass().getEAllAttributes().forEach(e -> {
-        			text.append("  "+ e.getName() +": "+ getItem().eGet(e));
-        		});
-        		text.append("     ("+ item.eContents().size()+")");
-        		setText(text.toString());
+        		//Show the root content
+        		Label classLabel= new Label(getItem().eClass().getName());
+        		classLabel.setStyle(classLabelStyle);
+        		hbox.getChildren().addAll(classLabel);
+        	
+        		if(getItem().eClass().getEAllAttributes().size() > 0) {
+        			createSeparator(hbox);
+        		}
+        		createAttributeLabel(hbox);
+        		//Show the number of the children
+        		hbox.getChildren().add(new Label("("+item.eContents().size()+")"));
         	}
-        
-            setGraphic(getTreeItem().getGraphic());
-         
+            setGraphic(hbox);
         }
-
+    }
+    private void createAttributeLabel(HBox hbox) {
+    	//An attribute of the feature and the attribute value
+		getItem().eClass().getEAllAttributes().forEach(attribute -> {
+			Label attriLabel = new Label(attribute.getName() +":");
+			attriLabel.setStyle(attributeLabelStyle);
+			hbox.getChildren().add(attriLabel);
+			if(getItem().eGet(attribute) != null) {
+				Label valueLabel = new Label(getItem().eGet(attribute).toString());
+				valueLabel.setStyle(valueLabelStyle);
+				hbox.getChildren().addAll(valueLabel);
+			}
+			createSeparator(hbox);
+		});
+    }
+ 
+    private void createSeparator(HBox hbox) {
+    	Separator separator = new Separator();
+		separator.setOrientation(Orientation.VERTICAL);
+		separator.setValignment(VPos.CENTER);
+		separator.setHalignment(HPos.CENTER);
+		hbox.getChildren().add(separator);
     }
 }

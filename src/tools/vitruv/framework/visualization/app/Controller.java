@@ -166,7 +166,7 @@ public class Controller implements Initializable{
 	 */
 	public void selectCorrespondingTreeItem(PackageTreeCell cell, TreeView<EObject> sourceTree, TreeView<EObject> targetTree) {
 		sourceTree.getSelectionModel().select(cell.getTreeItem());
-		if(cell.getTreeItem() != null) {
+		if(cell.getTreeItem() != null && cell.getTreeItem().isLeaf()) {
 			targetTree.getRoot().getChildren().forEach(targetItem -> {
 				selectTargetLeaf(targetTree, targetItem, vsumVisualizationAPI.getCorrespondingEObjects(cell.getTreeItem().getValue()));
 			});
@@ -200,8 +200,7 @@ public class Controller implements Initializable{
 	 * This method recursively finds and selects the target leaf tree item from the target tree, which is the corresponding object from the source tree item.
 	 * @param targetTree A target tree view in which the tree items of the corresponding objects will be found.
 	 * @param targetItem A target tree item from the target tree view
-	 * @param correspondingObject A corresponding EObject
-	 * @param correspondingAttribute A EAttribute of the corresponding EObject
+	 * @param correspondingObjectSet A set of the corresponding EObjects
 	 */
 	
 	//The corresponding leaf tree item will be automatically selected.
@@ -217,18 +216,14 @@ public class Controller implements Initializable{
 								isMatched &= true;
 							}else if(correspondingObject.eGet(correspondingAttribute) != null 
 									&& targetItem.getValue().eGet(targetAttribute) != null){
-//								System.out.println("------------");
-//								System.out.println(correspondingAttribute.getName() +" "+ targetAttribute.getName() + "   "+correspondingAttribute.getName().equals(targetAttribute.getName()));
-//								System.out.println(correspondingObject.eGet(correspondingAttribute) +" "+ targetItem.getValue().eGet(targetAttribute) + "   "+ correspondingObject.eGet(correspondingAttribute).equals(targetItem.getValue().eGet(targetAttribute)));
 								if(correspondingAttribute.getName().equals(targetAttribute.getName())
 										&& correspondingObject.eGet(correspondingAttribute).equals(targetItem.getValue().eGet(targetAttribute))) {
 									isMatched &= true;
-									
 								}else {
 									isMatched &= false;
 								}
 							}
-						}		
+						}
 					}
 				}
 			
@@ -236,7 +231,6 @@ public class Controller implements Initializable{
 					if(!targetItem.isLeaf()) {
 						targetItem.getChildren().forEach(targetChildItem -> {selectTargetLeaf(targetTree, targetChildItem, correspondingObjectSet);});
 					}else {
-						System.out.println(targetItem);
 						targetTree.getSelectionModel().select(targetItem);
 					}
 				}
