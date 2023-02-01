@@ -1,26 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.control.TreeView?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.shape.Line?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="tools.vitruv.framework.visualization.app.Controller" 
-			fx:id = "mainPane" maxHeight="Infinity" maxWidth="Infinity">
+<BorderPane fx:id="mainPane" maxHeight="Infinity" maxWidth="Infinity" prefHeight="750.0" prefWidth="1800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tools.vitruv.framework.visualization.app.Controller">
     <left>
-        <TreeView fx:id = "leftTree" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="471.0" maxHeight="Infinity" maxWidth="Infinity"/>
+        <SplitPane dividerPositions="0.19994438264738598, 0.4129588431590656" prefWidth="1800.0" BorderPane.alignment="TOP_LEFT">
+            <TreeView fx:id="leftTree" layoutX="0" layoutY="0" />
+            <TreeView fx:id="centerTree" layoutX="0" layoutY="0" />
+            <TreeView fx:id="rightTree" layoutX="0" layoutY="0" minWidth="15.0" prefWidth="650.0" />
+        </SplitPane>
     </left>
-    <center>
-        <TreeView fx:id = "centerTree" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="471.0" maxHeight="Infinity" maxWidth="Infinity"/>
-        
-    </center>
-    <right>
-        <TreeView fx:id = "rightTree" layoutX="0" layoutY="0" prefHeight="193.0" prefWidth="471.0" maxHeight="Infinity" maxWidth="Infinity"/>
-       
-    </right>
     <bottom>
-    	<TextArea fx:id = "textArea" maxHeight="Infinity" maxWidth="Infinity"/>
+        <TextArea fx:id="textArea" maxHeight="Infinity" maxWidth="Infinity" minHeight="0.0" minWidth="0.0" />
     </bottom>
 
 </BorderPane>

@@ -1,8 +1,6 @@
 package tools.vitruv.framework.visualization.app;
 
-
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -30,12 +28,13 @@ import tools.vitruv.framework.visualization.api.VSUMVisualizationAPI;
  *
  */
 public class Controller implements Initializable{
-	//There are all javafx view elements whose layout is defined in the view.fxml file.
+	//There are all Javafx view elements whose layout is defined in the view.fxml file.
 	@FXML private BorderPane mainPane;
 	@FXML private TreeView<EObject> leftTree;// A tree view for the FamiliesPackage on the left
 	@FXML private TreeView<EObject> centerTree;// A tree view for the PersonsPackage in the middle 
 	@FXML private TreeView<EObject> rightTree;// A tree view for the InsurancePackage on the right 
 	@FXML private TextArea textArea;//A text area a the bottom
+
 	
 	private VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> vsumVisualizationAPI; //A API for the visualization of three packages 
 	private Model model1;// A model for the FamiliesPackage view

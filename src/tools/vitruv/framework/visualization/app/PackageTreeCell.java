@@ -28,7 +28,7 @@ public class PackageTreeCell extends TreeCell<EObject>{
             setText(null);
             setGraphic(null);
         } else {
-        	HBox hbox = new HBox(6);
+        	HBox hbox = new HBox(4);
         	//If this cell is not as the root tree item and have some containing feature
         	if(getItem().eContainingFeature() != null) {
         		//A feature and the type of the feature
@@ -45,7 +45,6 @@ public class PackageTreeCell extends TreeCell<EObject>{
         		if(!getTreeItem().isLeaf()) {
         			hbox.getChildren().add(new Label("("+ item.eContents().size()+")"));
         		}
-        		
         	}else{
         		//Show the root content
         		Label classLabel= new Label(getItem().eClass().getName());
@@ -62,6 +61,7 @@ public class PackageTreeCell extends TreeCell<EObject>{
             setGraphic(hbox);
         }
     }
+    
     private void createAttributeLabel(HBox hbox) {
     	//An attribute of the feature and the attribute value
 		getItem().eClass().getEAllAttributes().forEach(attribute -> {
