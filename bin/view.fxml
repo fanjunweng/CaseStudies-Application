@@ -6,12 +6,9 @@
 <BorderPane fx:id="mainPane" maxHeight="Infinity" maxWidth="Infinity" prefHeight="750.0" prefWidth="1800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tools.vitruv.framework.visualization.app.Controller">
     <left>
         <SplitPane dividerPositions="0.19994438264738598, 0.4129588431590656" prefWidth="1800.0">
-            <TreeView fx:id="leftTree" layoutX="0" layoutY="0" />
-            <TreeView fx:id="centerTree" layoutX="0" layoutY="0" />
-            <TreeView fx:id="rightTree" layoutX="0" layoutY="0" minWidth="15.0" prefWidth="650.0" />
+            <TreeView fx:id="leftTree" layoutX="0" layoutY="0"/>
+            <TreeView fx:id="centerTree" layoutX="0" layoutY="0"/>
+            <TreeView fx:id="rightTree" layoutX="0" layoutY="0" minWidth="15.0" prefWidth="650.0"/>
         </SplitPane>
     </left>
-    <bottom>
-        <TextArea fx:id="textArea" maxHeight="Infinity" maxWidth="Infinity" minHeight="0.0" minWidth="0.0" />
-    </bottom>
 </BorderPane>

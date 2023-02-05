@@ -21,6 +21,5 @@ public class ChangeApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(true);
         primaryStage.show();
-	
 	}
 }

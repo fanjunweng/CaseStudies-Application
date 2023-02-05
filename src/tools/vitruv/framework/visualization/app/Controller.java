@@ -15,7 +15,7 @@ import edu.kit.ipd.sdq.metamodels.persons.PersonsPackage;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
@@ -33,7 +33,6 @@ public class Controller implements Initializable{
 	@FXML private TreeView<EObject> leftTree;// A tree view for the FamiliesPackage on the left
 	@FXML private TreeView<EObject> centerTree;// A tree view for the PersonsPackage in the middle 
 	@FXML private TreeView<EObject> rightTree;// A tree view for the InsurancePackage on the right 
-	@FXML private TextArea textArea;//A text area a the bottom
 	
 	private VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> vsumVisualizationAPI; //A API for the visualization of three packages 
 	private Model model1;// A model for the FamiliesPackage view
@@ -42,16 +41,15 @@ public class Controller implements Initializable{
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		//Instantiate an API of the visualization of the internal virtual model for the tree packages FamiliesPackage, PersonsPackage and InsurancePackage
+		//Instantiate a visualization API of the internal virtual model for the tree packages FamiliesPackage, PersonsPackage and InsurancePackage
 		vsumVisualizationAPI = VSUMVisualizationAPI.getVSUMFamiliesPersonsInsurancesAPI();
-		//Create models for the three packages from the API of the visualization of the internal virtual model
+		//Create models for the three package views from visualization API of the internal virtual model
 		model1 = new Model(vsumVisualizationAPI, vsumVisualizationAPI.getT1());
 		model2 = new Model(vsumVisualizationAPI, vsumVisualizationAPI.getT2());
 		model3 = new Model(vsumVisualizationAPI, vsumVisualizationAPI.getT3());
 		//Create the three tree view in the left, center and right side of the main pane
 		createTreeView();
-		//Create the text area in the bottom side of the main pane
-		createTextArea();;
+		printCorrespondingEObjects();
 	}
 	
 	/**
@@ -69,12 +67,12 @@ public class Controller implements Initializable{
 	/**
 	 * This method creates content in the text area that shows all corresponding Eobjects and the direction of their correspondence.
 	 */
-	private void createTextArea() {
+	private void printCorrespondingEObjects() {
 		StringJoiner builder = new StringJoiner(System.lineSeparator());
 		model1.getResourceForPackageView().getAllContents().forEachRemaining(eObject -> 
 			builder.add(eObject + " --> " + vsumVisualizationAPI.getCorrespondingEObjects(eObject)  + " --> " + 
-			vsumVisualizationAPI.getCorrespondingEObjects(vsumVisualizationAPI.getCorrespondingEObjects(eObject).iterator().next())));
-		textArea.setText(builder.toString());
+			vsumVisualizationAPI.getCorrespondingEObjects(vsumVisualizationAPI.getCorrespondingEObjects(eObject).iterator().next()) + "\n"));
+		System.out.println(builder.toString());
 	}
 
 
@@ -93,6 +91,8 @@ public class Controller implements Initializable{
 		TreeItem<EObject> rootItem = new TreeItem<EObject>(rootObject); 
 		rootItem.setExpanded(true);
 		model.getTreeView().setRoot(rootItem);
+		//Set up tree items of the tree view for multiple selection
+		model.getTreeView().getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		//Set the tree cell factory for the tree using the class PackageTreeCell
 		defineTreeCell(model);
 		// Create tree items for all objects of the root object, whose parent is the root tree item.
@@ -151,7 +151,7 @@ public class Controller implements Initializable{
 		childItem.setExpanded(true);
 		
 		// Calling its own functions for all existing Eattributes of the Eobject
-		if (object.eClass().getEAllAttributes() != null && object.eClass().getEAllAttributes().size() > 0) {
+		if (object.eClass().getEAllAttributes()!=null && object.eClass().getEAllAttributes().size()>0) {
 			object.eContents().forEach(attribute -> createChildren(childItem, attribute));
 		}
 	}
@@ -165,10 +165,17 @@ public class Controller implements Initializable{
 	 */
 	public void selectCorrespondingTreeItem(PackageTreeCell cell, TreeView<EObject> sourceTree, TreeView<EObject> targetTree) {
 		sourceTree.getSelectionModel().select(cell.getTreeItem());
-		if(cell.getTreeItem() != null && cell.getTreeItem().isLeaf()) {
-			targetTree.getRoot().getChildren().forEach(targetItem -> {
-				selectTargetLeaf(targetTree, targetItem, vsumVisualizationAPI.getCorrespondingEObjects(cell.getTreeItem().getValue()));
-			});
+		if(cell.getTreeItem()!=null && targetTree.getChildrenUnmodifiable().size()>0) {
+			//select matched root
+			if(targetTree.getRoot()!=null) {
+				selectMatchedTreeItems(targetTree, targetTree.getRoot(), vsumVisualizationAPI.getCorrespondingEObjects(cell.getTreeItem().getValue()));
+				//select matched children of the root
+				if(targetTree.getRoot().getChildren().size() > 0) {
+					targetTree.getRoot().getChildren().forEach(targetItem -> {
+						selectMatchedTreeItems(targetTree, targetItem, vsumVisualizationAPI.getCorrespondingEObjects(cell.getTreeItem().getValue()));
+					});
+				}
+			}
 		}
 	}
 	
@@ -180,9 +187,15 @@ public class Controller implements Initializable{
 	 */
 	public void selectCorrespondingTreeItem(TreeView<EObject> sourceTree, TreeView<EObject> targetTree) {
 		sourceTree.getSelectionModel().getSelectedItems().forEach(selected -> {
-			targetTree.getRoot().getChildren().forEach(targetItem -> {
-				selectTargetLeaf(targetTree, targetItem, vsumVisualizationAPI.getCorrespondingEObjects(selected.getValue()));
-			});
+			if(targetTree.getRoot()!=null) {
+				selectMatchedTreeItems(targetTree, targetTree.getRoot(), vsumVisualizationAPI.getCorrespondingEObjects(selected.getValue()));
+				//select matched children of the root
+				if(targetTree.getRoot().getChildren().size() > 0) {
+					targetTree.getRoot().getChildren().forEach(targetItem -> {
+						selectMatchedTreeItems(targetTree, targetItem, vsumVisualizationAPI.getCorrespondingEObjects(selected.getValue()));
+					});
+				}
+			}
 		});
 	}
 		
@@ -196,14 +209,12 @@ public class Controller implements Initializable{
 	}
 	
 	/**
-	 * This method recursively finds and selects the target leaf tree item from the target tree, which is the corresponding object from the source tree item.
+	 * This method recursively finds and selects the matched tree item from the target tree, which is the corresponding object from the source tree item.
 	 * @param targetTree A target tree view in which the tree items of the corresponding objects will be found.
 	 * @param targetItem A target tree item from the target tree view
 	 * @param correspondingObjectSet A set of the corresponding EObjects
 	 */
-	
-	//The corresponding leaf tree item will be automatically selected.
-	public void selectTargetLeaf(TreeView<EObject> targetTree, TreeItem<EObject> targetItem, Set<EObject> correspondingObjectSet) {
+	public void selectMatchedTreeItems(TreeView<EObject> targetTree, TreeItem<EObject> targetItem, Set<EObject> correspondingObjectSet) {
 		correspondingObjectSet.forEach(correspondingObject -> {
 			if(correspondingObject.eClass().equals(targetItem.getValue().eClass())) {
 				Boolean isMatched = true;
@@ -225,12 +236,12 @@ public class Controller implements Initializable{
 						}
 					}
 				}
-			
+				
+				//Whether the tree item matches the corresponding EObject
 				if(isMatched) {
+					targetTree.getSelectionModel().select(targetItem);
 					if(!targetItem.isLeaf()) {
-						targetItem.getChildren().forEach(targetChildItem -> {selectTargetLeaf(targetTree, targetChildItem, correspondingObjectSet);});
-					}else {
-						targetTree.getSelectionModel().select(targetItem);
+						targetItem.getChildren().forEach(targetChildItem -> {selectMatchedTreeItems(targetTree, targetChildItem, correspondingObjectSet);});
 					}
 				}
 			}
