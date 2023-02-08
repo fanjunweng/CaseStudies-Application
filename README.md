@@ -12,7 +12,7 @@ The correspondence between these three models can be shown in the application. W
 2. Run the application:
 Right click on any file under the `tools.vitruv.framework.visualization.src` package, select `Run as Java Application`. Or select the `run` menu item and choose `Run as Java Application`.
 
-##Project Development
+## Project Development
 The application depends on the following tools:
 + Eclipse Modeling Framework (EMF) as the modeling environment to process the EMF-model instances
 + JavaFX as a software platform for creating and delivering desktop applications
