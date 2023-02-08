@@ -15,13 +15,13 @@ import javafx.scene.layout.HBox;
  *
  */
 public class PackageTreeCell extends TreeCell<EObject>{
+	//Specific css styles for the label text
 	private String classLabelStyle = "-fx-font: normal bold 14px 'serif'";
 	private String featureLabelStyle = "-fx-font: normal bold 15px 'serif'; -fx-text-fill: dimgray"; 
 	private String attributeLabelStyle = "-fx-font: normal bold 13px; -fx-text-fill: midnightblue";
 	private String valueLabelStyle = "-fx-font: normal bold 14px 'serif'";
 	private String statusLabelStyle = "-fx-background-color: gold; -fx-font: 9px bold";
 
-	
     @Override
     public void updateItem(EObject item, boolean empty) {
         super.updateItem(item, empty);
@@ -33,7 +33,7 @@ public class PackageTreeCell extends TreeCell<EObject>{
         	//A horizonal container for each tree cell
         	HBox hbox = new HBox(4);
         	//If this cell is not as the root tree item and have some containing feature
-        	if(getItem().eContainingFeature() != null) {
+        	if(getItem().eContainingFeature()!=null) {
         		createFeatureLabel(hbox);
         		hbox.getChildren().addAll(new Label( " of type "));
         	}

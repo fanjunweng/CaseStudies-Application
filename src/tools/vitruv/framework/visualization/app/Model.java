@@ -3,7 +3,6 @@ package tools.vitruv.framework.visualization.app;
 
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
-
 import org.eclipse.emf.ecore.EObject;
 
 import edu.kit.ipd.sdq.metamodels.families.FamiliesPackage;
@@ -23,9 +22,9 @@ public class Model {
 	private TreeView<EObject> treeView;
 	
 	/**
-	 * 
-	 * @param vsumVisualizationAPI
-	 * @param ePackage
+	 * The construction function for the Model class
+	 * @param vsumVisualizationAPI  An API for the model visualization of three packages 
+	 * @param ePackage An EPackage, which belongs to one of these three packages 
 	 */
 	public Model(VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage>  vsumVisualizationAPI,
 				 EPackage ePackage) {
@@ -35,32 +34,32 @@ public class Model {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * This method gets the vsumVisualizationAPI object
+	 * @return An API for the model visualization of three packages
 	 */
 	public VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> getVSUMVisualizationAPI(){
 		return this.vsumVisualizationAPI;
 	}
 	
 	/**
-	 * 
-	 * @param vsumVisualizationAPI
+	 * This method sets the vsumVisualizationAPI object
+	 * @param vsumVisualizationAPI An API for the model visualization of three packages
 	 */
 	public void setVSUMVisualizationAPI(VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> vsumVisualizationAPI){
 		this.vsumVisualizationAPI = vsumVisualizationAPI;
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * This method gets the resource object
+	 * @return A persistent document containing the package view
 	 */
 	public Resource getResourceForPackageView() {
 		return this.resource;
 	}
 	
 	/**
-	 * 
-	 * @param ePackage
+	 * This method sets the resource object according to the EPackage
+	 * @param ePackage A representation of the model object EPackage
 	 */
 	public void setResourceForPackageView(EPackage ePackage) {
 		this.ePackage = ePackage;
@@ -68,27 +67,26 @@ public class Model {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * This method gets the ePackage object
+	 * @return A representation of the model object EPackage
 	 */
 	public EPackage getEPackage() {
 		return this.ePackage;
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * This method gets the treeView object
+	 * @return A tree view control
 	 */
 	public TreeView<EObject> getTreeView(){
 		return this.treeView;
 	}
 	
 	/**
-	 * 
-	 * @param treeView
+	 * This method sets the treeView object
+	 * @param treeView A view of hierarchical structures
 	 */
 	public void setTreeView(TreeView<EObject> treeView){
 		this.treeView = treeView;
 	}
-
 }

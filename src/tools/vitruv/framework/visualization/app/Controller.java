@@ -29,19 +29,19 @@ import tools.vitruv.framework.visualization.api.VSUMVisualizationAPI;
  */
 public class Controller implements Initializable{
 	//There are all Javafx view elements whose layout is defined in the view.fxml file.
-	@FXML private BorderPane mainPane;
+	@FXML private BorderPane mainPane; // A main layout control
 	@FXML private TreeView<EObject> leftTree;// A tree view for the FamiliesPackage on the left
 	@FXML private TreeView<EObject> centerTree;// A tree view for the PersonsPackage in the middle 
 	@FXML private TreeView<EObject> rightTree;// A tree view for the InsurancePackage on the right 
 	
-	private VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> vsumVisualizationAPI; //A API for the visualization of three packages 
+	private VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> vsumVisualizationAPI; //A API for the model visualization of three packages 
 	private Model model1;// A model for the FamiliesPackage view
 	private Model model2;// A model for the PersonsPackage view
 	private Model model3;// A model for the InsurancePackage view
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		//Instantiate a visualization API of the internal virtual model for the tree packages FamiliesPackage, PersonsPackage and InsurancePackage
+		//Instantiate an API of the internal virtual model visualization for the tree packages FamiliesPackage, PersonsPackage and InsurancePackage
 		vsumVisualizationAPI = VSUMVisualizationAPI.getVSUMFamiliesPersonsInsurancesAPI();
 		//Create models for the three package views from visualization API of the internal virtual model
 		model1 = new Model(vsumVisualizationAPI, vsumVisualizationAPI.getT1());
@@ -65,7 +65,7 @@ public class Controller implements Initializable{
 }
 
 	/**
-	 * This method creates content in the text area that shows all corresponding Eobjects and the direction of their correspondence.
+	 * This method creates content in the text area that shows all corresponding EObjects and the direction of their correspondence.
 	 */
 	private void printCorrespondingEObjects() {
 		StringJoiner builder = new StringJoiner(System.lineSeparator());
@@ -75,17 +75,16 @@ public class Controller implements Initializable{
 		System.out.println(builder.toString());
 	}
 
-
 	/**
 	 * This method converts the resource of the corresponding package from the model into the tree view,
 	 * creates all tree items for the tree view as EObject types,
 	 * 
-	 * @param model A model of a package view
+	 * @param model A model of a package model view
 	 */
 	public void convertDataToTreeView(Model model) {
 		//Get the resource from the model
 		Resource modelResource = model.getResourceForPackageView();
-		//Get the first Eobject from the resource content of the model
+		//Get the first EObject from the resource content of the model
 		EObject rootObject = modelResource.getContents().get(0);
 		// Create a root for the tree view
 		TreeItem<EObject> rootItem = new TreeItem<EObject>(rootObject); 
@@ -102,7 +101,7 @@ public class Controller implements Initializable{
 	/**
 	 * This method sets the tree cell as the custom tree view cell (see custom class: PackageTreeCell.class),
 	 * and adds the mouse click event to each tree cell to show all corresponding tree items.
-	 * @param model A model for the package view
+	 * @param model A model for the package model view
 	 */
 	private void defineTreeCell(Model model) {
 		//Set the tree cell factory for the tree using the class PackageTreeCell
@@ -139,7 +138,6 @@ public class Controller implements Initializable{
 		});
 	}
 
-	
 	/**
 	 * This method creates recursively all tree item children for the EAttribute of the corresponding EObject parent tree item 
 	 * @param parentItem A parent item for the tree view
@@ -157,10 +155,10 @@ public class Controller implements Initializable{
 	}
 	
 	/**
-	 * This method finds all tree items with the corresponding Eobject from other target trees, 
-	 * if a tree item with the source EObject from the source tree cell is clicked.
+	 * This method finds all tree items with the corresponding EObject from other target trees, 
+	 * if a tree item with the source EObject from the source tree cell is clicked by user.
 	 * @param cell PackageTreeCell A custom tree cell of the tree view
-	 * @param sourceTree A tree view in which a tree item cell is clicked
+	 * @param sourceTree A tree view in which a tree item cell is clicked by user
 	 * @param targetTree A tree view in which the tree items with the corresponding EObejct are searched.
 	 */
 	public void selectCorrespondingTreeItem(PackageTreeCell cell, TreeView<EObject> sourceTree, TreeView<EObject> targetTree) {
@@ -180,7 +178,7 @@ public class Controller implements Initializable{
 	}
 	
 	/**
-	 * This method finds and selects all tree items with the corresponding Eobject from other target trees, 
+	 * This method finds and selects all tree items with the corresponding EObject from other target trees, 
 	 * if a tree item with the source EObject from the source tree cell is selected.
 	 * @param sourceTree A tree view in which some tree item cells are selected
 	 * @param targetTree A tree view in which the tree items with the corresponding EObejct are searched.
