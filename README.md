@@ -5,9 +5,6 @@ As a GUI (graphical user interface), it visualizes the tree structure of model i
 
 The correspondence between these three models can be shown in the application. When the mouse clicks on an instance, all corresponding instances in the other tree views are selected in gray color. This allows you to quickly find all the correspondences. For the correspondence example, a family member is a person who has purchased an insurance. Based on this relationship, three instances are derived from the families, persons and insurance meta model, and correspond to each other and are consistent through change.
 
-
-
-
 ## Usage
 
 1. Open the `tools.vitruv.framework.visualization` project in Eclipse IDE.
@@ -15,12 +12,9 @@ The correspondence between these three models can be shown in the application. W
 2. Run the application:
 Right click on any file under the `tools.vitruv.framework.visualization.app` package, select `Run as Java Application`. Or select the `run` menu item and choose `Run as Java Application`.
 
-
-
-
 ##Project Development
 The application depends on the following tools:
 + Eclipse Modeling Framework (EMF) as the modeling environment to process the EMF-model instances
-+ JavaFX to implement a graphic user interface
++ JavaFX as a software platform for creating and delivering desktop applications
 
 

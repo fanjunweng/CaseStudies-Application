@@ -19,7 +19,8 @@ public class PackageTreeCell extends TreeCell<EObject>{
 	private String featureLabelStyle = "-fx-font: normal bold 15px 'serif'; -fx-text-fill: dimgray"; 
 	private String attributeLabelStyle = "-fx-font: normal bold 13px; -fx-text-fill: midnightblue";
 	private String valueLabelStyle = "-fx-font: normal bold 14px 'serif'";
-	private String createdLabelStyle = "-fx-background-color: gold; -fx-font: 9px bold";
+	private String statusLabelStyle = "-fx-background-color: gold; -fx-font: 9px bold";
+
 	
     @Override
     public void updateItem(EObject item, boolean empty) {
@@ -29,44 +30,42 @@ public class PackageTreeCell extends TreeCell<EObject>{
             setText(null);
             setGraphic(null);
         } else {
+        	//A horizonal container for each tree cell
         	HBox hbox = new HBox(4);
         	//If this cell is not as the root tree item and have some containing feature
         	if(getItem().eContainingFeature() != null) {
-        		//A feature and the type of the feature
-        		Label featureLabel = new Label(getItem().eContainingFeature().getName());
-        		featureLabel.setStyle(featureLabelStyle);
-        		Label typeLabel = new Label( " of type ");
-        		Label classLabel = new Label(getItem().eClass().getName());
-        		classLabel.setStyle(classLabelStyle);
-        		hbox.getChildren().addAll(featureLabel, typeLabel, classLabel);
-        		createSeparator(hbox);	
-        		//Create a label of the attribute of the feature with the value
-        		createAttributeLabel(hbox);
-        		//Show the number of the children
-        		if(!getTreeItem().isLeaf()) {
-        			hbox.getChildren().add(new Label("("+ item.eContents().size()+")"));
-        		}else {
-        			Label createdLabel = new Label("Created");
-            		createdLabel.setStyle(createdLabelStyle);
-            		hbox.getChildren().add(createdLabel);
-        		}
-        	}else{
-        		//Show the root content
-        		Label classLabel= new Label(getItem().eClass().getName());
-        		classLabel.setStyle(classLabelStyle);
-        		hbox.getChildren().addAll(classLabel);
-        	
-        		if(getItem().eClass().getEAllAttributes().size() > 0) {
-        			createSeparator(hbox);
-        		}
-        		createAttributeLabel(hbox);
-        		//Show the number of the children
-        		hbox.getChildren().add(new Label("("+item.eContents().size()+")"));
+        		createFeatureLabel(hbox);
+        		hbox.getChildren().addAll(new Label( " of type "));
         	}
+        	createClassLabel(hbox);
+    		if(getItem().eClass().getEAllAttributes().size()>0) {
+    			createSeparator(hbox);
+    		}	
+    		createAttributeLabel(hbox);
+    		createStatusLabel(hbox, "Created");
+    		createStatusLabel(hbox, "Deleted");
+    		createStatusLabel(hbox, "Updated");
+    		if(!getTreeItem().isLeaf()) {
+    			createChildNumberLabel(hbox);
+    		}
             setGraphic(hbox);
         }
     }
     
+    /**
+     * This method adds a class name label to the layout of the tree cell.
+     * @param hbox A layout component which positions all its child nodes (components) in a horizontal row.
+     */
+    private void createClassLabel(HBox hbox) {
+    	Label classLabel= new Label(getItem().eClass().getName());
+		classLabel.setStyle(classLabelStyle);
+		hbox.getChildren().add(classLabel);
+    }
+    
+    /**
+     * This method adds an attribute name label and an attribute value label to the layout of the tree cell.
+     * @param hbox A layout component which positions all its child nodes (components) in a horizontal row.
+     */
     private void createAttributeLabel(HBox hbox) {
     	//An attribute of the feature and the attribute value
 		getItem().eClass().getEAllAttributes().forEach(attribute -> {
@@ -82,6 +81,39 @@ public class PackageTreeCell extends TreeCell<EObject>{
 		});
     }
  
+    /**
+     * This method adds a containing feature name label to the layout of the tree cell.
+     * @param hbox A layout component which positions all its child nodes (components) in a horizontal row.
+     */
+    private void createFeatureLabel(HBox hbox) {
+    	Label featureLabel = new Label(getItem().eContainingFeature().getName());
+		featureLabel.setStyle(featureLabelStyle);
+		hbox.getChildren().add(featureLabel);	
+    }
+
+    /**
+     * This method adds a status label to the layout of the tree cell.
+     * @param hbox A layout component which positions all its child nodes (components) in a horizontal row.
+     * @param status A string about the status of the EObject 
+     */
+    private void createStatusLabel(HBox hbox, String status) {
+    	Label statusLabel = new Label(status);
+    	statusLabel.setStyle(statusLabelStyle);
+		hbox.getChildren().add(statusLabel);	
+    }
+    
+    /**
+     * This method adds a child number of labels to the layout of a tree cell.
+     * @param hbox A layout component which positions all its child nodes (components) in a horizontal row.
+     */
+    private void createChildNumberLabel(HBox hbox) {
+    	hbox.getChildren().add(new Label("("+ getItem().eContents().size()+")"));	
+    }
+
+    /**
+     * This method adds a vertical separator line to the layout of a tree cell.
+     * @param hbox A layout component which positions all its child nodes (components) in a horizontal row.
+     */
     private void createSeparator(HBox hbox) {
     	Separator separator = new Separator();
 		separator.setOrientation(Orientation.VERTICAL);

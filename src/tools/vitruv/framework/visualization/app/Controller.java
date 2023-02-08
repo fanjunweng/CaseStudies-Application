@@ -100,8 +100,8 @@ public class Controller implements Initializable{
 	}
 	
 	/**
-	 * This method sets the tree view cells as objects of custom tree view cells (see custom class: PackageTreeCell.class),
-	 * and.......
+	 * This method sets the tree cell as the custom tree view cell (see custom class: PackageTreeCell.class),
+	 * and adds the mouse click event to each tree cell to show all corresponding tree items.
 	 * @param model A model for the package view
 	 */
 	private void defineTreeCell(Model model) {
@@ -170,7 +170,7 @@ public class Controller implements Initializable{
 			if(targetTree.getRoot()!=null) {
 				selectMatchedTreeItems(targetTree, targetTree.getRoot(), vsumVisualizationAPI.getCorrespondingEObjects(cell.getTreeItem().getValue()));
 				//select matched children of the root
-				if(targetTree.getRoot().getChildren().size() > 0) {
+				if(targetTree.getRoot().getChildren().size()>0) {
 					targetTree.getRoot().getChildren().forEach(targetItem -> {
 						selectMatchedTreeItems(targetTree, targetItem, vsumVisualizationAPI.getCorrespondingEObjects(cell.getTreeItem().getValue()));
 					});
@@ -190,7 +190,7 @@ public class Controller implements Initializable{
 			if(targetTree.getRoot()!=null) {
 				selectMatchedTreeItems(targetTree, targetTree.getRoot(), vsumVisualizationAPI.getCorrespondingEObjects(selected.getValue()));
 				//select matched children of the root
-				if(targetTree.getRoot().getChildren().size() > 0) {
+				if(targetTree.getRoot().getChildren().size()>0) {
 					targetTree.getRoot().getChildren().forEach(targetItem -> {
 						selectMatchedTreeItems(targetTree, targetItem, vsumVisualizationAPI.getCorrespondingEObjects(selected.getValue()));
 					});
@@ -216,14 +216,17 @@ public class Controller implements Initializable{
 	 */
 	public void selectMatchedTreeItems(TreeView<EObject> targetTree, TreeItem<EObject> targetItem, Set<EObject> correspondingObjectSet) {
 		correspondingObjectSet.forEach(correspondingObject -> {
+			//Compare the class
 			if(correspondingObject.eClass().equals(targetItem.getValue().eClass())) {
 				Boolean isMatched = true;
 				for(EAttribute targetAttribute : targetItem.getValue().eClass().getEAllAttributes()){
 					for(EAttribute correspondingAttribute: correspondingObject.eClass().getEAllAttributes()) {
+						//Compare the attribute name
 						if(correspondingAttribute.getName().equals(targetAttribute.getName())){
 							if(correspondingObject.eGet(correspondingAttribute) == null 
 									&& targetItem.getValue().eGet(targetAttribute) == null){
 								isMatched &= true;
+							//Compare the attribute value
 							}else if(correspondingObject.eGet(correspondingAttribute) != null 
 									&& targetItem.getValue().eGet(targetAttribute) != null){
 								if(correspondingAttribute.getName().equals(targetAttribute.getName())
@@ -237,11 +240,13 @@ public class Controller implements Initializable{
 					}
 				}
 				
-				//Whether the tree item matches the corresponding EObject
+				//Whether the tree item matches the corresponding EObject.
+				//Matching means equal class, attribute name and attribute value.
 				if(isMatched) {
 					targetTree.getSelectionModel().select(targetItem);
 					if(!targetItem.isLeaf()) {
-						targetItem.getChildren().forEach(targetChildItem -> {selectMatchedTreeItems(targetTree, targetChildItem, correspondingObjectSet);});
+						targetItem.getChildren().forEach(targetChildItem -> {
+							selectMatchedTreeItems(targetTree, targetChildItem, correspondingObjectSet);});
 					}
 				}
 			}
