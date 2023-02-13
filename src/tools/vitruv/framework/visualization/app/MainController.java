@@ -2,23 +2,15 @@ package tools.vitruv.framework.visualization.app;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.StringJoiner;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import tools.vitruv.framework.visualization.api.VSUMVisualizationAPI;
 
@@ -55,64 +47,44 @@ public class MainController<T1 extends EPackage, T2 extends EPackage, T3 extends
 		controllerList.forEach(modelController -> {
 			modelController.loadDataToTreeView();
 		});
-			
-		//Listener 1
-		controllerList.get(0).clickedProperty().addListener((o, oldVal, newVal) -> {
-			if(newVal==true && !controllerList.get(0).getSelectedObject().isEmpty()) {
-				System.out.println("0 old: "+ oldVal); 
-				System.out.println("new: "+ newVal + "\n");
-				controllerList.get(1).clearSelections();
-				controllerList.get(2).clearSelections();
-				propagateToNextController(controllerList.get(0), controllerList.get(1));
-				propagateToNextController(controllerList.get(1), controllerList.get(2));
-				controllerList.get(0).declick();
-				controllerList.get(1).declick();
-				controllerList.get(2).declick();
-			}
-		});
-		
-		//Listener 2
-	   controllerList.get(1).clickedProperty().addListener((o, oldVal, newVal) -> {
-			if(newVal==true && !controllerList.get(1).getSelectedObject().isEmpty()) {
-				System.out.println("1 old: "+ oldVal); 
-				System.out.println("new: "+ newVal + "\n");
-			
-				controllerList.get(0).clearSelections();
-				controllerList.get(2).clearSelections();
-				propagateToNextController(controllerList.get(1), controllerList.get(0));
-				propagateToNextController(controllerList.get(1), controllerList.get(2));
-				controllerList.get(0).declick();
-				controllerList.get(1).declick();
-				controllerList.get(2).declick();
-
-			}
-		});
-	   
-	   //Listener 3
-	  	controllerList.get(2).clickedProperty().addListener((o, oldVal, newVal) -> {
-			if(newVal==true && !controllerList.get(2).getSelectedObject().isEmpty()) {
-				System.out.println("2 old: "+ oldVal); 
-				System.out.println("new: "+ newVal + "\n");
-				controllerList.get(1).clearSelections();
-				controllerList.get(0).clearSelections();
-				propagateToNextController(controllerList.get(2), controllerList.get(1));
-				propagateToNextController(controllerList.get(2), controllerList.get(0));
-				controllerList.get(0).declick();
-				controllerList.get(1).declick();
-				controllerList.get(2).declick();
-			}
-		});
+		selectCorrepondingObjects();
 	}
 	
+	public void selectCorrepondingObjects() {
+		controllerList.forEach(currentController -> {
+			currentController.clickedProperty().addListener((o, oldVal, newVal) -> {
+				if(newVal==true) {
+					controllerList.forEach(remainingController -> {
+						if(remainingController!=currentController) {
+							remainingController.clearSelections();
+						}
+					});
+					controllerList.forEach(remainingController -> {
+						propagateToNextController(currentController.getSelectedObject(), remainingController);
+					});
+					
+					controllerList.forEach(remainingController1 -> {
+						controllerList.forEach(remainingController2 -> {
+							if(remainingController1!=currentController && remainingController2!=currentController) {
+								propagateToNextController(remainingController1.getSelectedObject(), remainingController2);
+							}
+						});	
+					});
+
+					currentController.declick();
+				}
+			});
+		});
+	}
 
 	
 	private VSUMVisualizationAPI<T1, T2, T3> getVsumVisualizationAPI() {
 		return vsumVisualizationAPI;
 	}
 	
-	private void propagateToNextController(ModelController currentController, ModelController nextController) {
-		if(currentController.getSelectedObject()!=null) {
-			currentController.getSelectedObject().forEach(o -> {
+	private void propagateToNextController(List<EObject> selectedObjects, ModelController nextController) {
+		if(selectedObjects!=null) {
+			selectedObjects.forEach(o -> {
 				nextController.selectCorrespondingObjects(getVsumVisualizationAPI().getCorrespondingEObjects(o));
 			});
 		}

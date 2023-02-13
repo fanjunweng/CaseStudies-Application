@@ -13,7 +13,7 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.layout.HBox;
 
 /**
- * This class refers to the custom tree cell from the tree view.
+ * This class implements the tree cell of the tree view and customizes the UI controls in the tree cell.
  *
  */
 public class PackageTreeCell extends TreeCell<EObject>{
