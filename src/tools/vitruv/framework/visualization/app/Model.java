@@ -3,67 +3,32 @@ package tools.vitruv.framework.visualization.app;
 
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.EObject;
 
-import edu.kit.ipd.sdq.metamodels.families.FamiliesPackage;
-import edu.kit.ipd.sdq.metamodels.insurance.InsurancePackage;
-import edu.kit.ipd.sdq.metamodels.persons.PersonsPackage;
-import javafx.scene.control.TreeView;
-import tools.vitruv.framework.visualization.api.VSUMVisualizationAPI;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EObject;
+import tools.vitruv.framework.views.View;
 
 /**
- * This class model refers to a model in the MVC pattern.
+ * This class model refers to a model in the MVC pattern, that contains the package view and the view resource.
  *
  */
 public class Model {
-	private VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage>  vsumVisualizationAPI;
 	private Resource resource;
 	private EPackage ePackage;
-	private TreeView<EObject> treeView;
+	private View view;
+	private EObject rootObject;
 	
 	/**
 	 * The construction function for the Model class
-	 * @param vsumVisualizationAPI  An API for the model visualization of three packages 
 	 * @param ePackage An EPackage, which belongs to one of these three packages 
+	 * @param view A view of the package
 	 */
-	public Model(VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage>  vsumVisualizationAPI,
-				 EPackage ePackage) {
-		this.vsumVisualizationAPI = vsumVisualizationAPI;
+	public Model(EPackage ePackage, View view) { 
 		this.ePackage = ePackage;
-		this.resource = vsumVisualizationAPI.getView(this.ePackage).getRootObjects().iterator().next().eResource();
-	}
-	
-	/**
-	 * This method gets the vsumVisualizationAPI object
-	 * @return An API for the model visualization of three packages
-	 */
-	public VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> getVSUMVisualizationAPI(){
-		return this.vsumVisualizationAPI;
-	}
-	
-	/**
-	 * This method sets the vsumVisualizationAPI object
-	 * @param vsumVisualizationAPI An API for the model visualization of three packages
-	 */
-	public void setVSUMVisualizationAPI(VSUMVisualizationAPI<FamiliesPackage, PersonsPackage, InsurancePackage> vsumVisualizationAPI){
-		this.vsumVisualizationAPI = vsumVisualizationAPI;
-	}
-	
-	/**
-	 * This method gets the resource object
-	 * @return A persistent document containing the package view
-	 */
-	public Resource getResourceForPackageView() {
-		return this.resource;
-	}
-	
-	/**
-	 * This method sets the resource object according to the EPackage
-	 * @param ePackage A representation of the model object EPackage
-	 */
-	public void setResourceForPackageView(EPackage ePackage) {
-		this.ePackage = ePackage;
-		this.resource = vsumVisualizationAPI.getView(this.ePackage).getRootObjects().iterator().next().eResource();
+		this.view = view;
+		this.resource = this.view.getRootObjects().iterator().next().eResource();
+		this.rootObject = this.resource.getContents().get(0);
 	}
 	
 	/**
@@ -74,19 +39,27 @@ public class Model {
 		return this.ePackage;
 	}
 	
-	/**
-	 * This method gets the treeView object
-	 * @return A tree view control
-	 */
-	public TreeView<EObject> getTreeView(){
-		return this.treeView;
+	public View getView() {
+		return this.view;
 	}
 	
 	/**
-	 * This method sets the treeView object
-	 * @param treeView A view of hierarchical structures
+	 * This method gets the resource object
+	 * @return A persistent document containing the package view
 	 */
-	public void setTreeView(TreeView<EObject> treeView){
-		this.treeView = treeView;
+	public Resource getResource() {
+		return this.resource;
+	}
+
+	public EObject getRootObject() {
+		return this.rootObject;
+	}
+	
+	public EList<EObject> getChildren(EObject object) {
+		return object.eContents();
+	}
+	
+	public EList<EAttribute> getAttributes(EObject object) {
+		return object.eClass().getEAllAttributes();
 	}
 }
