@@ -56,39 +56,38 @@ public class PackageTreeCell extends TreeCell<EObject>{
     		if(!getTreeItem().isLeaf()) {
     			hbox.getChildren().add(createChildNumberLabel());
     		}
-    		
+
             setGraphic(hbox);
         }
     }
     
-
     private Node createClassLabel() {
     	Node classLabel= new Label(getItem().eClass().getName());
-    	classLabel.setId("classLabel");
+    	classLabel.getStyleClass().add("classStyle");
 		return classLabel;
     }
     
     private Node createAttributeLabel(EAttribute attribute) {
     	Node attributeLabel = new Label(attribute.getName() +":");
-		attributeLabel.setId("attributeLabel");
+		attributeLabel.getStyleClass().add("attributeStyle");
 		return attributeLabel;
     }
     
     private Node createAttributeValueLabel(EAttribute attribute) {
 		Node valueLabel = new Label(getItem().eGet(attribute).toString());
-		valueLabel.setId("valueLabel");
+		valueLabel.getStyleClass().add("valueStyle");
 		return valueLabel;
     }
     
     private Node createFeatureLabel() {
     	Node featureLabel = new Label(getItem().eContainingFeature().getName());	
-    	featureLabel.setId("featureLabel");
+    	featureLabel.getStyleClass().add("featureStyle");
 		return featureLabel;
     }
  
     private Node createStatusLabel(String status) {
     	Node statusLabel = new Label(status);
-    	statusLabel.setId("statusLabel");
+    	statusLabel.getStyleClass().add("statusStyle");
 		return statusLabel;
     }
     

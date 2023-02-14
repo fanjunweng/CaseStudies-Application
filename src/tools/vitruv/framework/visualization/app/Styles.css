@@ -1,31 +1,35 @@
-#classLabel{
+.classStyle{
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-font-family: serif;
 }
 
-#featureLabel{
+.featureStyle{
     -fx-font-weight: bold;
     -fx-font-size: 15px;
     -fx-font-family: serif;
     -fx-text-fill: dimgray;
 }
 
-#attributeLabel{
+.attributeStyle{
     -fx-font-weight: bold;
     -fx-font-size: 13px;
     -fx-text-fill: midnightblue;
 }
 
-#valueLabel{
-    -fx-font-weight: bold;
+.valueStyle{
+	-fx-font-weight: bold;
     -fx-font-family: serif;
     -fx-font-size: 14px;
 }
 
-#statusLabel{
+.statusStyle{
     -fx-background-color: gold;
     -fx-font-size: 9px;
     -fx-font-weight: bold;
     -fx-font-style: normal;
+}
+
+.hboxStyle{
+	-fx-background-color: #8fbc8f;
 }

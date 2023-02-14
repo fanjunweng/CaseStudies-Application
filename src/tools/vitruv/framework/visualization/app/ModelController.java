@@ -98,8 +98,8 @@ public class ModelController implements SingleResourceVisualizationController{
 	@Override
 	public List<EObject> getSelectedObjects() {
 		List<EObject> list = new ArrayList<>();
-		getTreeView().getSelectionModel().getSelectedItems().forEach(p -> {
-			list.add(p.getValue());
+		getTreeView().getSelectionModel().getSelectedItems().forEach(selected -> {
+			list.add(selected.getValue());
 		});
 		return list;
 	}
@@ -116,6 +116,7 @@ public class ModelController implements SingleResourceVisualizationController{
 		correspondingObjectSet.forEach(correspondingObject -> {
 			if(targetItem.getValue().equals(correspondingObject)) {
 				getTreeView().getSelectionModel().select(targetItem);
+//				targetItem.getGraphic().setStyle("-fx-text-fill: blue;");
 				if(!targetItem.isLeaf() && !targetItem.getChildren().isEmpty()) {
 					targetItem.getChildren().forEach(targetChildItem -> {
 						selectCorrespondingTreeItems(targetChildItem, correspondingObjectSet);});
