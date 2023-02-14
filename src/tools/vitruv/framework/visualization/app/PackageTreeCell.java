@@ -56,7 +56,7 @@ public class PackageTreeCell extends TreeCell<EObject>{
     		if(!getTreeItem().isLeaf()) {
     			hbox.getChildren().add(createChildNumberLabel());
     		}
-
+   
             setGraphic(hbox);
         }
     }

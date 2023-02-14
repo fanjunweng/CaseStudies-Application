@@ -32,7 +32,7 @@ public class ModelController implements SingleResourceVisualizationController{
 		return this.model;
 	}
 	
-	private TreeView<EObject> getTreeView() {
+	TreeView<EObject> getTreeView() {
 		return this.treeView;
 	}
 	
@@ -68,7 +68,7 @@ public class ModelController implements SingleResourceVisualizationController{
 	 * @param object A EObject from the parent tree item
 	 */
 	private TreeItem<EObject> createTreeItem(TreeItem<EObject> parentItem, EObject object) {
-		TreeItem<EObject> treeItem=new TreeItem<EObject>(object);
+		TreeItem<EObject> treeItem = new TreeItem<EObject>(object);
 		treeItem.setExpanded(true);
 		if(parentItem==null) {
 			getTreeView().setRoot(treeItem);
@@ -116,7 +116,6 @@ public class ModelController implements SingleResourceVisualizationController{
 		correspondingObjectSet.forEach(correspondingObject -> {
 			if(targetItem.getValue().equals(correspondingObject)) {
 				getTreeView().getSelectionModel().select(targetItem);
-//				targetItem.getGraphic().setStyle("-fx-text-fill: blue;");
 				if(!targetItem.isLeaf() && !targetItem.getChildren().isEmpty()) {
 					targetItem.getChildren().forEach(targetChildItem -> {
 						selectCorrespondingTreeItems(targetChildItem, correspondingObjectSet);});

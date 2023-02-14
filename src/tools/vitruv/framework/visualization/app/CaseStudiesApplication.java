@@ -25,7 +25,7 @@ public class CaseStudiesApplication extends Application {
 		Model model3 = new Model(vsumVisualizationAPI.getT3(), vsumVisualizationAPI.getView(vsumVisualizationAPI.getT3()));
 		
 		FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/view.fxml"));
+        loader.setLocation(getClass().getResource("view.fxml"));
 		loader.setController(new MainController<FamiliesPackage, PersonsPackage, InsurancePackage>(vsumVisualizationAPI, model1, model2, model3));
 		Parent root = loader.load();
         Scene scene = new Scene(root, 1800, 750);
@@ -34,7 +34,7 @@ public class CaseStudiesApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Case Studies Application");
         primaryStage.setResizable(true);
-//        primaryStage.setFullScreen(true);
+        primaryStage.setFullScreen(true);
         primaryStage.show();
 	}
 }
