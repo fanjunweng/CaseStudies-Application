@@ -16,7 +16,7 @@ import tools.vitruv.framework.visualization.api.VSUMVisualizationAPI;
 
 /**
  * 
- * This class refers to a controller in the MVC pattern that acts on both model (Model.java) and view (view.fxml).
+ * This class is a main controller in the MVC pattern, that process the data communication between three model controllers.
  *
  */
 public class MainController<T1 extends EPackage, T2 extends EPackage, T3 extends EPackage> implements Initializable{
@@ -38,6 +38,10 @@ public class MainController<T1 extends EPackage, T2 extends EPackage, T3 extends
 		this.model2 = M2;
 		this.model3 = M3;
 	}
+	
+	private VSUMVisualizationAPI<T1, T2, T3> getVsumVisualizationAPI() {
+		return this.vsumVisualizationAPI;
+	}
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -47,42 +51,47 @@ public class MainController<T1 extends EPackage, T2 extends EPackage, T3 extends
 		controllerList.forEach(modelController -> {
 			modelController.loadDataToTreeView();
 		});
-		selectCorrepondingObjects();
-	}
-	
-	public void selectCorrepondingObjects() {
-		controllerList.forEach(currentController -> {
-			currentController.clickedProperty().addListener((o, oldVal, newVal) -> {
-				if(newVal==true) {
-					controllerList.forEach(remainingController -> {
-						if(remainingController!=currentController) {
-							remainingController.clearSelections();
-						}
-					});
-					controllerList.forEach(remainingController -> {
-						propagateToNextController(currentController.getSelectedObject(), remainingController);
-					});
-					
-					controllerList.forEach(remainingController1 -> {
-						controllerList.forEach(remainingController2 -> {
-							if(remainingController1!=currentController && remainingController2!=currentController) {
-								propagateToNextController(remainingController1.getSelectedObject(), remainingController2);
-							}
-						});	
-					});
-
-					currentController.declick();
-				}
-			});
+		
+		controllerList.forEach(modelController -> {
+			selectCorrepondingObjects(modelController);
 		});
 	}
-
 	
-	private VSUMVisualizationAPI<T1, T2, T3> getVsumVisualizationAPI() {
-		return vsumVisualizationAPI;
+	/**
+	 * Listening to all controllers, if a tree node of a controller's tree view is clicked by a user, 
+	 * the clicked EObject will then be passed to the other controllers, 
+	 * that will highlight the corresponding object tree node of the clicked EObject
+	 * @param currentController A controller that has a tree view containing a tree node selected by the user
+	 */
+	public void selectCorrepondingObjects(ModelController currentController) {
+		currentController.clickProperty().addListener((o, oldVal, newVal) -> {
+			if(newVal==true) {
+				controllerList.forEach(remainingController -> {
+					if(remainingController!=currentController) {
+						remainingController.clearSelections();
+					}
+				});
+				controllerList.forEach(remainingController -> {
+					passSelectionToNextController(currentController.getSelectedObjects(), remainingController);
+				});
+				controllerList.forEach(remainingController1 -> {
+					controllerList.forEach(remainingController2 -> {
+						if(remainingController1!=currentController && remainingController2!=currentController) {
+							passSelectionToNextController(remainingController1.getSelectedObjects(), remainingController2);
+						}
+					});	
+				});
+				currentController.declick();
+			}
+		});
 	}
 	
-	private void propagateToNextController(List<EObject> selectedObjects, ModelController nextController) {
+	/**
+	 * Pass the selected EObejcts into the next controller
+	 * @param selectedObjects EObjects clicked by the user
+	 * @param nextController A controller that the selected EObejcts will be passed into
+	 */
+	private void passSelectionToNextController(List<EObject> selectedObjects, ModelController nextController) {
 		if(selectedObjects!=null) {
 			selectedObjects.forEach(o -> {
 				nextController.selectCorrespondingObjects(getVsumVisualizationAPI().getCorrespondingEObjects(o));

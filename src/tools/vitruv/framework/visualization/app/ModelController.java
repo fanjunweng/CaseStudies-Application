@@ -8,67 +8,58 @@ import org.eclipse.emf.ecore.EObject;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.EventHandler;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.input.MouseEvent;
 
-
+/**
+ * This class is a model controller, that implements an interface of the single resource visualization controller,
+ * loads single resource into visual tree view, 
+ * and highlights the corresponding EObjects of a clicked EObject in the this tree view.
+ *
+ */
 public class ModelController implements SingleResourceVisualizationController{
 	private Model model;
-	private TreeView<EObject> tree;
+	private TreeView<EObject> treeView;
 	private ObjectProperty<Boolean> clickedProperty = new SimpleObjectProperty<Boolean>();
 	
-	ModelController(Model model, TreeView<EObject> tree){
+	ModelController(Model model, TreeView<EObject> treeView){
 		this.model = model;
-		this.tree = tree;
+		this.treeView = treeView;
 	}
 
-	@Override
-	public Model getModel() {
+	private Model getModel() {
 		return this.model;
 	}
 	
-	@Override
-	public ObjectProperty<Boolean> clickedProperty() {
-		return clickedProperty;
+	private TreeView<EObject> getTreeView() {
+		return this.treeView;
 	}
 	
-	public TreeView<EObject> getTreeView() {
-		return this.tree;
-	}
-
-	public void declick() {
-		clickedProperty.set(false);;
+	@Override
+	public ObjectProperty<Boolean> clickProperty() {
+		return clickedProperty;
 	}
 	
 	private void click() {
 		clickedProperty.set(true);
 	}
 	
+	@Override
+	public void declick() {
+		clickedProperty.set(false);;
+	}
+	
 	/**
-	 * This method converts the resource of the corresponding package from the model into the tree view,
-	 * creates all tree items for the tree view as EObject types,
+	 * This method converts the root object and its children of the model into the tree view,
+	 * creates all tree items for the tree view as EObject types.
 	 */
+	@Override
 	public void loadDataToTreeView() {
-		TreeItem<EObject> rootItem = new TreeItem<EObject>(this.model.getRootObject()); 
-		rootItem.setExpanded(true);
-		getTreeView().setRoot(rootItem);
-		getTreeView().getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		getModel().getChildren(getModel().getRootObject()).forEach(object -> createChildren(rootItem, object));
-		getTreeView().setCellFactory(tv -> {
-			PackageTreeCell cell = new PackageTreeCell();
-			cell.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-				@Override
-			    public void handle(MouseEvent event) {
-					if(cell.getTreeItem()!=null) {
-						click();
-					}
-				}
-			});		
-			return cell;
-		});
+		TreeItem<EObject> rootItem = createTreeItem(null, getModel().getRootObject());
+		if(!getModel().getContentObjects(getModel().getRootObject()).isEmpty()) {
+			getModel().getContentObjects(getModel().getRootObject()).forEach(object -> createTreeItem(rootItem, object));
+		}
 	}
 	
 	/**
@@ -76,16 +67,36 @@ public class ModelController implements SingleResourceVisualizationController{
 	 * @param parentItem A parent item for the tree view
 	 * @param object A EObject from the parent tree item
 	 */
-	private void createChildren(TreeItem<EObject> parentItem, EObject object) {
-		TreeItem<EObject> childItem = new TreeItem<EObject>(object);
-		parentItem.getChildren().add(childItem);
-		childItem.setExpanded(true);
-		if (object.eClass().getEAllAttributes()!=null && !object.eClass().getEAllAttributes().isEmpty()) {
-			object.eContents().forEach(attribute -> createChildren(childItem, attribute));
+	private TreeItem<EObject> createTreeItem(TreeItem<EObject> parentItem, EObject object) {
+		TreeItem<EObject> treeItem=new TreeItem<EObject>(object);
+		treeItem.setExpanded(true);
+		if(parentItem==null) {
+			getTreeView().setRoot(treeItem);
+			getTreeView().getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+			getTreeView().setCellFactory(tv -> {
+				PackageTreeCell cell = new PackageTreeCell();
+				setTreeCellMouseEventHandler(cell);	
+				return cell;
+			});
+		}else {
+			parentItem.getChildren().add(treeItem);
+			if (getModel().getAttributes(object)!=null && !getModel().getAttributes(object).isEmpty()) {
+				getModel().getContentObjects(object).forEach(attribute -> createTreeItem(treeItem, attribute));
+			}
 		}
+		return treeItem;
 	}
 	
-	public List<EObject> getSelectedObject() {
+	private void setTreeCellMouseEventHandler(PackageTreeCell cell) {
+		cell.setOnMouseClicked(mouseEvent -> {
+			if(cell.getTreeItem()!=null) {
+				click();
+			}
+		});	
+	}
+	
+	@Override
+	public List<EObject> getSelectedObjects() {
 		List<EObject> list = new ArrayList<>();
 		getTreeView().getSelectionModel().getSelectedItems().forEach(p -> {
 			list.add(p.getValue());
@@ -93,31 +104,27 @@ public class ModelController implements SingleResourceVisualizationController{
 		return list;
 	}
 	
+	@Override
 	public void selectCorrespondingObjects(Set<EObject> correspondingObjectSet){
-//		clearSelections();
-		selectMatchedTreeItems(getTreeView().getRoot(), correspondingObjectSet);
-		
+		selectCorrespondingTreeItems(getTreeView().getRoot(), correspondingObjectSet);
 		if(!getTreeView().getRoot().getChildren().isEmpty()) {
-			getTreeView().getRoot().getChildren().forEach(child -> {
-				selectMatchedTreeItems(child, correspondingObjectSet);
-			});
+			getTreeView().getRoot().getChildren().forEach(child -> {selectCorrespondingTreeItems(child, correspondingObjectSet);});
 		}
 	}
 	
-	private void selectMatchedTreeItems(TreeItem<EObject> targetItem, Set<EObject> correspondingObjectSet) {
+	private void selectCorrespondingTreeItems(TreeItem<EObject> targetItem, Set<EObject> correspondingObjectSet) {
 		correspondingObjectSet.forEach(correspondingObject -> {
-			System.out.println("corres: "+correspondingObject);
-				//Whether the tree item matches the corresponding EObject
 			if(targetItem.getValue().equals(correspondingObject)) {
 				getTreeView().getSelectionModel().select(targetItem);
 				if(!targetItem.isLeaf() && !targetItem.getChildren().isEmpty()) {
 					targetItem.getChildren().forEach(targetChildItem -> {
-						selectMatchedTreeItems(targetChildItem, correspondingObjectSet);});
+						selectCorrespondingTreeItems(targetChildItem, correspondingObjectSet);});
 				}
 			}
 		});
 	}
 	
+	@Override
 	public void clearSelections() {
 		getTreeView().getSelectionModel().clearSelection();
 	}
