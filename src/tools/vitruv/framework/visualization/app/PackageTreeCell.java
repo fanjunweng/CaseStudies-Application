@@ -27,7 +27,7 @@ public class PackageTreeCell extends TreeCell<EObject>{
             setText(null);
             setGraphic(null);
         } else {
-        	//A horizonal container to place all UI controls
+        	//A horizontal container to place all UI controls
         	HBox hbox = new HBox(spacing);
       
         	if(getItem().eContainingFeature()!=null) {
