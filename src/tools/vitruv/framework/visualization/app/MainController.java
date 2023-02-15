@@ -49,13 +49,8 @@ public class MainController<T1 extends EPackage, T2 extends EPackage, T3 extends
 		controllerList.add(new ModelController(model1, leftTree));
 		controllerList.add(new ModelController(model2, centerTree));
 		controllerList.add(new ModelController(model3, rightTree));
-		controllerList.forEach(modelController -> {
-			modelController.setResource();
-		});
-		
-		controllerList.forEach(modelController -> {
-			selectCorrepondingObjects(modelController);
-		});
+		controllerList.forEach(modelController -> {modelController.setResource();});
+		controllerList.forEach(modelController -> {selectCorrepondingObjects(modelController);});
 	}
 	
 	/**

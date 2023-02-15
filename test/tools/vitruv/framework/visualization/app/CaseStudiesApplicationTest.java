@@ -37,5 +37,4 @@ public class CaseStudiesApplicationTest {
         });
         thread.start();// Initialize the thread
     }
-
 }
