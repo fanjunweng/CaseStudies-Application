@@ -20,7 +20,7 @@ import tools.vitruv.framework.visualization.api.VSUMVisualizationAPI;
 public class ModelControllerTest{
 
 	/**
-	 * Test method for {@link tools.vitruv.framework.visualization.app.ModelController#loadDataToTreeView()}.
+	 * Test method for {@link tools.vitruv.framework.visualization.app.ModelController#setResource()}.
 	 */
 	@Test
 	public void testLoadDataToTreeView() {
@@ -34,7 +34,7 @@ public class ModelControllerTest{
                         try {
                         	Model model = new Model(VSUMVisualizationAPI.getVSUMFamiliesPersonsInsurancesAPI().getT1(), VSUMVisualizationAPI.getVSUMFamiliesPersonsInsurancesAPI().getView(VSUMVisualizationAPI.getVSUMFamiliesPersonsInsurancesAPI().getT1()));
                         	ModelController controller = new ModelController(model, new TreeView<EObject>());
-                        	controller.loadDataToTreeView();
+                        	controller.setResource();
                         	assertEquals(model.getResource().getContents().size(), controller.getTreeView().getChildrenUnmodifiable().size());
                         	assertEquals(model.getRootObject(), controller.getTreeView().getRoot().getValue());
                         	

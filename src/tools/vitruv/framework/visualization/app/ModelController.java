@@ -3,11 +3,10 @@ package tools.vitruv.framework.visualization.app;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.eclipse.emf.ecore.EObject;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -21,8 +20,8 @@ import javafx.scene.control.TreeView;
 public class ModelController implements SingleResourceVisualizationController{
 	private Model model;
 	private TreeView<EObject> treeView;
-	private ObjectProperty<Boolean> clickedProperty = new SimpleObjectProperty<Boolean>();
-	
+	private Consumer<SingleResourceVisualizationController> onChangeConsumer;
+
 	ModelController(Model model, TreeView<EObject> treeView){
 		this.model = model;
 		this.treeView = treeView;
@@ -36,18 +35,13 @@ public class ModelController implements SingleResourceVisualizationController{
 		return this.treeView;
 	}
 	
-	@Override
-	public ObjectProperty<Boolean> clickProperty() {
-		return clickedProperty;
-	}
-	
-	private void click() {
-		clickedProperty.set(true);
+	public Consumer<SingleResourceVisualizationController> getOnChangeConsumer() {
+		return this.onChangeConsumer;
 	}
 	
 	@Override
-	public void declick() {
-		clickedProperty.set(false);;
+	public void setSelectedObjectsChangedConsumer(Consumer<SingleResourceVisualizationController> consumer) {
+		this.onChangeConsumer = consumer;
 	}
 	
 	/**
@@ -55,7 +49,7 @@ public class ModelController implements SingleResourceVisualizationController{
 	 * creates all tree items for the tree view as EObject types.
 	 */
 	@Override
-	public void loadDataToTreeView() {
+	public void setResource() {
 		TreeItem<EObject> rootItem = createTreeItem(null, getModel().getRootObject());
 		if(!getModel().getContentObjects(getModel().getRootObject()).isEmpty()) {
 			getModel().getContentObjects(getModel().getRootObject()).forEach(object -> createTreeItem(rootItem, object));
@@ -90,7 +84,7 @@ public class ModelController implements SingleResourceVisualizationController{
 	private void setTreeCellMouseEventHandler(PackageTreeCell cell) {
 		cell.setOnMouseClicked(mouseEvent -> {
 			if(cell.getTreeItem()!=null) {
-				click();
+				getOnChangeConsumer().accept(this);
 			}
 		});	
 	}

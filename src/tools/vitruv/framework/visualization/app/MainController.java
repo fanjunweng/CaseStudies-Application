@@ -16,7 +16,8 @@ import tools.vitruv.framework.visualization.api.VSUMVisualizationAPI;
 
 /**
  * 
- * This class is a main controller in the MVC pattern, that process the data communication between three model controllers.
+ * This class is a main controller in the MVC pattern, 
+ * that process the data communication between three model controllers.
  *
  */
 public class MainController<T1 extends EPackage, T2 extends EPackage, T3 extends EPackage> implements Initializable{
@@ -28,7 +29,7 @@ public class MainController<T1 extends EPackage, T2 extends EPackage, T3 extends
 	private Model model1;// A model for the FamiliesPackage view
 	private Model model2;// A model for the PersonsPackage view
 	private Model model3;// A model for the InsurancePackage view
-	private ArrayList<ModelController> controllerList = new ArrayList<>();
+	private List<SingleResourceVisualizationController> controllerList = new ArrayList<>();
 	private VSUMVisualizationAPI<T1, T2, T3> vsumVisualizationAPI;
 
 
@@ -49,7 +50,7 @@ public class MainController<T1 extends EPackage, T2 extends EPackage, T3 extends
 		controllerList.add(new ModelController(model2, centerTree));
 		controllerList.add(new ModelController(model3, rightTree));
 		controllerList.forEach(modelController -> {
-			modelController.loadDataToTreeView();
+			modelController.setResource();
 		});
 		
 		controllerList.forEach(modelController -> {
@@ -63,26 +64,23 @@ public class MainController<T1 extends EPackage, T2 extends EPackage, T3 extends
 	 * that will highlight the corresponding object tree node of the clicked EObject
 	 * @param currentController A controller that has a tree view containing a tree node selected by the user
 	 */
-	public void selectCorrepondingObjects(ModelController currentController) {
-		currentController.clickProperty().addListener((o, oldVal, newVal) -> {
-			if(newVal==true) {
-				controllerList.forEach(remainingController -> {
-					if(remainingController!=currentController) {
-						remainingController.clearSelections();
+	public void selectCorrepondingObjects(SingleResourceVisualizationController currentController) {
+		currentController.setSelectedObjectsChangedConsumer(controller -> {
+			controllerList.forEach(remainingController -> {
+				if(remainingController!=currentController) {
+					remainingController.clearSelections();
+				}
+			});
+			controllerList.forEach(remainingController -> {
+				passSelectionToNextController(currentController.getSelectedObjects(), remainingController);
+			});
+			controllerList.forEach(remainingController1 -> {
+				controllerList.forEach(remainingController2 -> {
+					if(remainingController1!=currentController && remainingController2!=currentController) {
+						passSelectionToNextController(remainingController1.getSelectedObjects(), remainingController2);
 					}
-				});
-				controllerList.forEach(remainingController -> {
-					passSelectionToNextController(currentController.getSelectedObjects(), remainingController);
-				});
-				controllerList.forEach(remainingController1 -> {
-					controllerList.forEach(remainingController2 -> {
-						if(remainingController1!=currentController && remainingController2!=currentController) {
-							passSelectionToNextController(remainingController1.getSelectedObjects(), remainingController2);
-						}
-					});	
-				});
-				currentController.declick();
-			}
+				});	
+			});
 		});
 	}
 	
@@ -91,7 +89,7 @@ public class MainController<T1 extends EPackage, T2 extends EPackage, T3 extends
 	 * @param selectedObjects EObjects clicked by the user
 	 * @param nextController A controller that the selected EObejcts will be passed into
 	 */
-	private void passSelectionToNextController(List<EObject> selectedObjects, ModelController nextController) {
+	private void passSelectionToNextController(List<EObject> selectedObjects, SingleResourceVisualizationController nextController) {
 		if(selectedObjects!=null) {
 			selectedObjects.forEach(o -> {
 				nextController.selectCorrespondingObjects(getVsumVisualizationAPI().getCorrespondingEObjects(o));

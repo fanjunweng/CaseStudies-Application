@@ -2,31 +2,27 @@ package tools.vitruv.framework.visualization.app;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.eclipse.emf.ecore.EObject;
 
-import javafx.beans.property.ObjectProperty;
-
 /**
  * This interface is a controller for individual resource visualization, 
- * that implements the functionality of loading single resource data in xmi format into a visual tree view control,
+ * that implements the functionality of set single resource data in xmi format into a visual tree view control,
  * and and highlighting the corresponding object of a clicked object.
  */
 public interface SingleResourceVisualizationController {
 	/**
-	 * Load single resource data in xmi format into a visual tree view control
+	 * Convert single resource data in XMI format into a visual tree view
 	 */
-	void loadDataToTreeView();
+	void setResource();
+	
 	/**
-	 * Return the click boolean property of the tree view of the single resource in order to add a listener to it
-	 * @return click boolean property of this tree view
+	 *Set highlighting operations for selected EObjects and their corresponding EObjects in each tree view
+	 * @param consumer An operation representation that accepts a single input argument 
 	 */
-	ObjectProperty<Boolean> clickProperty();
-	/**
-	 * Set the click boolean property of this tree view to false 
-	 * in oder to change the observable value of the property listener
-	 */
-	void declick();
+	void setSelectedObjectsChangedConsumer(Consumer<SingleResourceVisualizationController> consumer);
+
 	/**
 	 * Return a list of the selected EObjects in order to find their corresponding EObjects
 	 * @return list of the selected EObjects
