@@ -27,9 +27,9 @@ public class PackageTreeCell extends TreeCell<EObject>{
             setText(null);
             setGraphic(null);
         } else {
-        	//A horizonal container for each tree cell
+        	//A horizonal container to place all UI controls
         	HBox hbox = new HBox(spacing);
-        	//If this cell is not as the root tree item and have some containing feature
+      
         	if(getItem().eContainingFeature()!=null) {
         		hbox.getChildren().addAll(createFeatureLabel(), new Label( " of type "));
         	}
@@ -52,11 +52,9 @@ public class PackageTreeCell extends TreeCell<EObject>{
     				,createStatusLabel(ChangeType.DELETED.toString())
     	    		,createStatusLabel(ChangeType.UPDATED.toString()));
     		
-    		
     		if(!getTreeItem().isLeaf()) {
     			hbox.getChildren().add(createChildNumberLabel());
     		}
-   
             setGraphic(hbox);
         }
     }
